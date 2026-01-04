@@ -1,7 +1,18 @@
 import { useMemo } from 'react'
-import { Check, AlertTriangle, FileText, FolderTree, ChevronDown, Download, Package } from 'lucide-react'
+import { Check, AlertTriangle, FileText, FolderTree, ChevronDown, Download, Package, Trash2 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
 import { AppLayout } from '@/components/AppLayout'
 import { loadProductData, hasExportZip, getExportZipUrl } from '@/lib/product-loader'
 import { getAllSectionIds, getSectionScreenDesigns } from '@/lib/section-loader'
@@ -264,6 +275,63 @@ export function ExportPage() {
             </Collapsible>
           </CardContent>
         </Card>
+
+        {/* Danger Zone */}
+        <div className="pt-8 border-t border-stone-200 dark:border-stone-800">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-medium text-stone-900 dark:text-stone-100">Danger Zone</h3>
+              <p className="text-sm text-stone-500 dark:text-stone-400">
+                Irreversible actions for project management
+              </p>
+            </div>
+
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/10 rounded-md transition-colors">
+                  <Trash2 className="w-4 h-4" />
+                  Reset Project
+                </button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete your entire product design, including:
+                    <ul className="list-disc list-inside mt-2 space-y-1">
+                      <li>Product definition and roadmap</li>
+                      <li>Design system (colors/typography)</li>
+                      <li>All section screen designs</li>
+                      <li>Application shell</li>
+                    </ul>
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    className="bg-red-600 hover:bg-red-700 text-white"
+                    onClick={async () => {
+                      try {
+                        const res = await fetch('/__reset-project', { method: 'DELETE' })
+                        if (res.ok) {
+                          window.location.reload()
+                        } else {
+                          console.error('Failed to reset project')
+                          alert('Failed to reset project')
+                        }
+                      } catch (err) {
+                        console.error('Error resetting project:', err)
+                        alert('Error resetting project')
+                      }
+                    }}
+                  >
+                    Reset Everything
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        </div>
       </div>
     </AppLayout>
   )
