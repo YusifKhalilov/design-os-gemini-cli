@@ -40,9 +40,9 @@ export function loadColorTokens(): ColorTokens | null {
  *
  * Expected format:
  * {
- *   "heading": "DM Sans",
- *   "body": "DM Sans",
- *   "mono": "IBM Plex Mono"
+ *   "heading": "Bricolage Grotesque",
+ *   "body": "Bricolage Grotesque",
+ *   "mono": "JetBrains Mono"
  * }
  */
 export function loadTypographyTokens(): TypographyTokens | null {
@@ -57,7 +57,7 @@ export function loadTypographyTokens(): TypographyTokens | null {
   return {
     heading: typography.heading,
     body: typography.body,
-    mono: typography.mono || 'IBM Plex Mono',
+    mono: typography.mono || 'JetBrains Mono',
   }
 }
 
