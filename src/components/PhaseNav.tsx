@@ -29,7 +29,7 @@ interface PhaseInfo {
   isComplete: boolean
 }
 
-function usePhaseStatuses(): PhaseInfo[] {
+const usePhaseStatuses = (): PhaseInfo[] => {
   const location = useLocation()
   const productData = useMemo(() => loadProductData(), [])
 
@@ -88,63 +88,56 @@ function usePhaseStatuses(): PhaseInfo[] {
   })
 }
 
-export function PhaseNav() {
+export const PhaseNav = () => {
   const navigate = useNavigate()
   const phaseInfos = usePhaseStatuses()
 
   return (
-    <nav className="flex items-center justify-center">
+    <nav id="phase-nav" className="glass-nav">
       {phaseInfos.map(({ phase, status, isComplete }, index) => {
         const Icon = phase.icon
         const isFirst = index === 0
+        const isCurrent = status === 'current'
+        const prevIsComplete = index > 0 && phaseInfos[index - 1].isComplete
 
         return (
-          <div key={phase.id} className="flex items-center">
+          <div id={`phase-item-${phase.id}`} key={phase.id} className="glass-nav-item" style={{ display: 'grid', gridAutoFlow: 'column', alignItems: 'center' }}>
             {/* Connector line */}
             {!isFirst && (
               <div
-                className={`w-4 sm:w-8 lg:w-12 h-px transition-colors duration-200 ${
-                  status === 'upcoming'
-                    ? 'bg-stone-200 dark:bg-stone-700'
-                    : 'bg-stone-400 dark:bg-stone-500'
-                }`}
+                id={`phase-connector-${phase.id}`}
+                className={`glass-nav-connector ${prevIsComplete || isComplete ? 'is-active' : ''}`}
               />
             )}
 
-            {/* Phase button */}
-            <button
-              onClick={() => navigate(phase.path)}
-              className={`
-                group relative flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg transition-all duration-200 whitespace-nowrap
-                ${status === 'current'
-                  ? 'bg-stone-900 dark:bg-stone-100 text-stone-100 dark:text-stone-900 shadow-sm'
-                  : status === 'completed'
-                    ? 'bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-700'
-                    : 'text-stone-400 dark:text-stone-500 hover:text-stone-600 dark:hover:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-800/50'
-                }
-              `}
-            >
-              <Icon
-                className={`w-4 h-4 shrink-0 transition-transform duration-200 group-hover:scale-110 ${
-                  status === 'current' ? '' : status === 'completed' ? '' : 'opacity-60'
-                }`}
-                strokeWidth={1.5}
-              />
-              <span className={`text-sm font-medium hidden sm:inline ${
-                status === 'upcoming' ? 'opacity-60' : ''
-              }`}>
+            {/* Phase button container */}
+            <div id={`phase-btn-container-${phase.id}`} style={{ position: 'relative' }}>
+              <button
+                id={`phase-btn-${phase.id}`}
+                onClick={() => navigate(phase.path)}
+                className={`glass-nav-btn ${isCurrent ? 'is-current' : ''}`}
+                aria-label={phase.label}
+              >
+                <Icon
+                  className="glass-nav-icon"
+                  strokeWidth={1.5}
+                />
+
+                {/* Completion indicator */}
+                {isComplete && (
+                  <span id={`phase-complete-${phase.id}`} className="glass-nav-complete">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </span>
+                )}
+              </button>
+
+              {/* Tooltip */}
+              <span id={`phase-tooltip-${phase.id}`} className="glass-tooltip">
                 {phase.label}
               </span>
-
-              {/* Completion indicator - check circle at top-left (shows even when current) */}
-              {isComplete && (
-                <span className="absolute -top-1 -left-1 w-4 h-4 rounded-full bg-lime-500 flex items-center justify-center shadow-sm">
-                  <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                  </svg>
-                </span>
-              )}
-            </button>
+            </div>
           </div>
         )
       })}

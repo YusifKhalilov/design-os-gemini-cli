@@ -72,179 +72,166 @@ export function DesignPage() {
   const hasShell = !!shell?.spec
   const allStepsComplete = hasDesignSystem && hasShell
 
-  const stepStatuses = getDesignPageStepStatuses(hasDesignSystem, hasShell)
-
   return (
     <AppLayout>
-      <div className="space-y-6">
-        {/* Page intro */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-semibold text-stone-900 dark:text-stone-100 mb-2">
-            Design System
-          </h1>
-          <p className="text-stone-600 dark:text-stone-400">
-            Define the visual foundation and application shell for your product.
-          </p>
-        </div>
+      {/* Page Header */}
+      <div id="design-page-header" className="kiosk-page-header">
+        <h1 id="design-title" className="text-2xl font-semibold text-stone-900 dark:text-stone-100">
+          Design System
+        </h1>
+        <p id="design-description" className="text-stone-600 dark:text-stone-400">
+          Define the visual foundation and application shell for your product.
+        </p>
+      </div>
 
-        {/* Step 1: Design Tokens */}
-        <StepIndicator step={1} status={stepStatuses[0]}>
-          {!designSystem?.colors && !designSystem?.typography ? (
-            <EmptyState type="design-system" />
-          ) : (
-            <Card className="border-stone-200 dark:border-stone-700 shadow-sm">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-lg font-semibold text-stone-900 dark:text-stone-100">
-                  Design Tokens
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Colors */}
-                {designSystem?.colors && (
-                  <div>
-                    <h4 className="text-sm font-medium text-stone-500 dark:text-stone-400 uppercase tracking-wide mb-4">
-                      Colors
-                    </h4>
-                    <div className="grid grid-cols-3 gap-6">
-                      <ColorSwatch
-                        label="Primary"
-                        colorName={designSystem.colors.primary}
-                      />
-                      <ColorSwatch
-                        label="Secondary"
-                        colorName={designSystem.colors.secondary}
-                      />
-                      <ColorSwatch
-                        label="Neutral"
-                        colorName={designSystem.colors.neutral}
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {/* Typography */}
-                {designSystem?.typography && (
-                  <div>
-                    <h4 className="text-sm font-medium text-stone-500 dark:text-stone-400 uppercase tracking-wide mb-4">
-                      Typography
-                    </h4>
-                    <div className="grid grid-cols-3 gap-6">
-                      <div>
-                        <p className="text-xs text-stone-500 dark:text-stone-400 mb-1">Heading</p>
-                        <p className="font-semibold text-stone-900 dark:text-stone-100">
-                          {designSystem.typography.heading}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-stone-500 dark:text-stone-400 mb-1">Body</p>
-                        <p className="text-stone-900 dark:text-stone-100">
-                          {designSystem.typography.body}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-stone-500 dark:text-stone-400 mb-1">Mono</p>
-                        <p className="font-mono text-stone-900 dark:text-stone-100">
-                          {designSystem.typography.mono}
-                        </p>
+      {/* Page Body - Two column kiosk layout */}
+      <div id="design-page-body" className="kiosk-page-body">
+        <div id="design-grid" className="kiosk-split-2">
+          {/* Left Column: Design Tokens */}
+          <div id="tokens-panel" className="kiosk-card">
+            <div id="tokens-header" className="kiosk-card-header">
+              <h2 id="tokens-title" className="text-lg font-semibold text-stone-900 dark:text-stone-100">
+                Design Tokens
+              </h2>
+              <p id="tokens-subtitle" className="text-sm text-stone-500 dark:text-stone-400">
+                Colors and typography
+              </p>
+            </div>
+            <div id="tokens-body" className="kiosk-card-body kiosk-scroll">
+              {!designSystem?.colors && !designSystem?.typography ? (
+                <EmptyState type="design-system" />
+              ) : (
+                <div id="tokens-content" style={{ display: 'grid', gap: '24px' }}>
+                  {/* Colors */}
+                  {designSystem?.colors && (
+                    <div id="colors-section">
+                      <h4 id="colors-label" className="text-sm font-medium text-stone-500 dark:text-stone-400 uppercase tracking-wide mb-4">
+                        Colors
+                      </h4>
+                      <div id="colors-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+                        <ColorSwatch label="Primary" colorName={designSystem.colors.primary} />
+                        <ColorSwatch label="Secondary" colorName={designSystem.colors.secondary} />
+                        <ColorSwatch label="Neutral" colorName={designSystem.colors.neutral} />
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {/* Edit hint */}
-                <div className="bg-stone-100 dark:bg-stone-800 rounded-md px-4 py-2.5">
-                  <p className="text-xs text-stone-500 dark:text-stone-400">
-                    Run <code className="font-mono text-stone-700 dark:text-stone-300">/design-tokens</code> to update
-                  </p>
+                  {/* Typography */}
+                  {designSystem?.typography && (
+                    <div id="typography-section">
+                      <h4 id="typography-label" className="text-sm font-medium text-stone-500 dark:text-stone-400 uppercase tracking-wide mb-4">
+                        Typography
+                      </h4>
+                      <div id="typography-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+                        <div id="heading-font">
+                          <p className="text-xs text-stone-500 dark:text-stone-400 mb-1">Heading</p>
+                          <p className="font-semibold text-stone-900 dark:text-stone-100">{designSystem.typography.heading}</p>
+                        </div>
+                        <div id="body-font">
+                          <p className="text-xs text-stone-500 dark:text-stone-400 mb-1">Body</p>
+                          <p className="text-stone-900 dark:text-stone-100">{designSystem.typography.body}</p>
+                        </div>
+                        <div id="mono-font">
+                          <p className="text-xs text-stone-500 dark:text-stone-400 mb-1">Mono</p>
+                          <p className="font-mono text-stone-900 dark:text-stone-100">{designSystem.typography.mono}</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </CardContent>
-            </Card>
-          )}
-        </StepIndicator>
+              )}
+            </div>
+            <div id="tokens-footer" className="kiosk-card-footer">
+              <div id="tokens-hint" className="bg-stone-100 dark:bg-stone-800 rounded-md px-4 py-2.5">
+                <p className="text-xs text-stone-500 dark:text-stone-400">
+                  Run <code className="font-mono text-stone-700 dark:text-stone-300">/design-tokens</code> to update
+                </p>
+              </div>
+            </div>
+          </div>
 
-        {/* Step 2: Application Shell */}
-        <StepIndicator step={2} status={stepStatuses[1]} isLast={!allStepsComplete}>
-          {!shell?.spec ? (
-            <EmptyState type="shell" />
-          ) : (
-            <Card className="border-stone-200 dark:border-stone-700 shadow-sm">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-lg font-semibold text-stone-900 dark:text-stone-100">
-                  Application Shell
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Overview */}
-                {shell.spec.overview && (
-                  <p className="text-stone-600 dark:text-stone-400 leading-relaxed">
-                    {shell.spec.overview}
-                  </p>
-                )}
+          {/* Right Column: Application Shell */}
+          <div id="shell-panel" className="kiosk-card">
+            <div id="shell-header" className="kiosk-card-header">
+              <h2 id="shell-title" className="text-lg font-semibold text-stone-900 dark:text-stone-100">
+                Application Shell
+              </h2>
+              <p id="shell-subtitle" className="text-sm text-stone-500 dark:text-stone-400">
+                Navigation and layout structure
+              </p>
+            </div>
+            <div id="shell-body" className="kiosk-card-body kiosk-scroll">
+              {!shell?.spec ? (
+                <EmptyState type="shell" />
+              ) : (
+                <div id="shell-content" style={{ display: 'grid', gap: '16px' }}>
+                  {/* Overview */}
+                  {shell.spec.overview && (
+                    <p id="shell-overview" className="text-stone-600 dark:text-stone-400 leading-relaxed">
+                      {shell.spec.overview}
+                    </p>
+                  )}
 
-                {/* Navigation items */}
-                {shell.spec.navigationItems.length > 0 && (
-                  <div>
-                    <h4 className="text-sm font-medium text-stone-500 dark:text-stone-400 uppercase tracking-wide mb-2">
-                      Navigation
-                    </h4>
-                    <ul className="space-y-1">
-                      {shell.spec.navigationItems.map((item, index) => {
-                        // Parse markdown-style bold: **text** → <strong>text</strong>
-                        const parts = item.split(/\*\*([^*]+)\*\*/)
-                        return (
-                          <li key={index} className="flex items-center gap-2 text-stone-700 dark:text-stone-300">
-                            <span className="w-1 h-1 rounded-full bg-stone-400 dark:bg-stone-500" />
-                            {parts.map((part, i) =>
-                              i % 2 === 1 ? (
-                                <strong key={i} className="font-semibold">{part}</strong>
-                              ) : (
-                                <span key={i}>{part}</span>
-                              )
-                            )}
-                          </li>
-                        )
-                      })}
-                    </ul>
-                  </div>
-                )}
+                  {/* Navigation items */}
+                  {shell.spec.navigationItems.length > 0 && (
+                    <div id="nav-items-section">
+                      <h4 id="nav-items-label" className="text-sm font-medium text-stone-500 dark:text-stone-400 uppercase tracking-wide mb-2">
+                        Navigation
+                      </h4>
+                      <ul id="nav-items-list" style={{ display: 'grid', gap: '4px' }}>
+                        {shell.spec.navigationItems.map((item, index) => {
+                          const parts = item.split(/\*\*([^*]+)\*\*/)
+                          return (
+                            <li id={`nav-item-${index}`} key={index} style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '8px', alignItems: 'center' }} className="text-stone-700 dark:text-stone-300">
+                              <span className="w-1 h-1 rounded-full bg-stone-400 dark:bg-stone-500" />
+                              <span>
+                                {parts.map((part, i) =>
+                                  i % 2 === 1 ? (
+                                    <strong key={i} className="font-semibold">{part}</strong>
+                                  ) : (
+                                    <span key={i}>{part}</span>
+                                  )
+                                )}
+                              </span>
+                            </li>
+                          )
+                        })}
+                      </ul>
+                    </div>
+                  )}
 
-                {/* View Shell Design Link */}
-                {shell.hasComponents && (
-                  <div className="pt-2 border-t border-stone-100 dark:border-stone-800">
-                    <Link
-                      to="/shell/design"
-                      className="flex items-center justify-between gap-4 py-2 hover:text-stone-900 dark:hover:text-stone-100 transition-colors group"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-md bg-stone-200 dark:bg-stone-700 flex items-center justify-center">
+                  {/* View Shell Design Link */}
+                  {shell.hasComponents && (
+                    <div id="shell-link-section" className="pt-2 border-t border-stone-100 dark:border-stone-800">
+                      <Link
+                        id="shell-design-link"
+                        to="/shell/design"
+                        style={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', gap: '12px', alignItems: 'center' }}
+                        className="py-2 hover:text-stone-900 dark:hover:text-stone-100 transition-colors group"
+                      >
+                        <div id="shell-icon-wrapper" className="w-8 h-8 rounded-md bg-stone-200 dark:bg-stone-700" style={{ display: 'grid', placeItems: 'center' }}>
                           <Layout className="w-4 h-4 text-stone-600 dark:text-stone-300" strokeWidth={1.5} />
                         </div>
                         <span className="font-medium text-stone-700 dark:text-stone-300 group-hover:text-stone-900 dark:group-hover:text-stone-100">
                           View Shell Design
                         </span>
-                      </div>
-                      <ChevronRight className="w-4 h-4 text-stone-400 dark:text-stone-500" strokeWidth={1.5} />
-                    </Link>
-                  </div>
-                )}
-
-                {/* Edit hint */}
-                <div className="bg-stone-100 dark:bg-stone-800 rounded-md px-4 py-2.5">
-                  <p className="text-xs text-stone-500 dark:text-stone-400">
-                    Run <code className="font-mono text-stone-700 dark:text-stone-300">/design-shell</code> to update
-                  </p>
+                        <ChevronRight className="w-4 h-4 text-stone-400 dark:text-stone-500" strokeWidth={1.5} />
+                      </Link>
+                    </div>
+                  )}
                 </div>
-              </CardContent>
-            </Card>
-          )}
-        </StepIndicator>
-
-        {/* Next Phase Button - shown when all steps complete */}
-        {allStepsComplete && (
-          <StepIndicator step={3} status="current" isLast>
-            <NextPhaseButton nextPhase="sections" />
-          </StepIndicator>
-        )}
+              )}
+            </div>
+            <div id="shell-footer" className="kiosk-card-footer">
+              <div id="shell-hint" className="bg-stone-100 dark:bg-stone-800 rounded-md px-4 py-2.5">
+                <p className="text-xs text-stone-500 dark:text-stone-400">
+                  Run <code className="font-mono text-stone-700 dark:text-stone-300">/design-shell</code> to update
+                </p>
+              </div>
+              {allStepsComplete && <NextPhaseButton nextPhase="sections" />}
+            </div>
+          </div>
+        </div>
       </div>
     </AppLayout>
   )

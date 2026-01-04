@@ -5,37 +5,8 @@ import { AppLayout } from '@/components/AppLayout'
 import { EmptyState } from '@/components/EmptyState'
 import { ProductOverviewCard } from '@/components/ProductOverviewCard'
 import { SectionsCard } from '@/components/SectionsCard'
-import { StepIndicator, type StepStatus } from '@/components/StepIndicator'
 import { NextPhaseButton } from '@/components/NextPhaseButton'
-
-/**
- * Determine the status of each step on the Product page
- * Steps: 1. Product Vision, 2. Roadmap
- */
-function getProductPageStepStatuses(
-  hasOverview: boolean,
-  hasRoadmap: boolean
-): StepStatus[] {
-  const statuses: StepStatus[] = []
-
-  // Step 1: Product Vision
-  if (hasOverview) {
-    statuses.push('completed')
-  } else {
-    statuses.push('current')
-  }
-
-  // Step 2: Roadmap
-  if (hasRoadmap) {
-    statuses.push('completed')
-  } else if (hasOverview) {
-    statuses.push('current')
-  } else {
-    statuses.push('upcoming')
-  }
-
-  return statuses
-}
+import { FileText, Map } from 'lucide-react'
 
 export function ProductPage() {
   const navigate = useNavigate()
@@ -45,52 +16,77 @@ export function ProductPage() {
   const hasRoadmap = !!productData.roadmap
   const allStepsComplete = hasOverview && hasRoadmap
 
-  const stepStatuses = getProductPageStepStatuses(hasOverview, hasRoadmap)
-
   return (
     <AppLayout>
-      <div className="space-y-6">
-        {/* Page intro */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-semibold text-stone-900 dark:text-stone-100 mb-2">
-            Product Definition
-          </h1>
-          <p className="text-stone-600 dark:text-stone-400">
-            Define your product vision and break it into development sections.
-          </p>
-        </div>
+      {/* Page Header */}
+      <div id="product-page-header" className="kiosk-page-header">
+        <h1 id="product-title" className="text-2xl font-semibold text-stone-900 dark:text-stone-100">
+          Product Definition
+        </h1>
+        <p id="product-description" className="text-stone-600 dark:text-stone-400">
+          Define your product vision and break it into development sections.
+        </p>
+      </div>
 
-        {/* Step 1: Product Vision */}
-        <div id="step-overview">
-          <StepIndicator step={1} status={stepStatuses[0]}>
-            {productData.overview ? (
-              <ProductOverviewCard overview={productData.overview} />
-            ) : (
-              <EmptyState type="overview" />
+      {/* Page Body - Two column kiosk layout */}
+      <div id="product-page-body" className="kiosk-page-body">
+        <div id="product-grid" className="kiosk-split-2">
+          {/* Left Column: Product Vision */}
+          <div id="product-vision-panel" className="glass-card">
+            <div id="vision-header" className="glass-card-header">
+              <div id="vision-icon-wrapper" className="glass-card-icon">
+                <FileText id="vision-icon" />
+              </div>
+              <div id="vision-header-text">
+                <h2 id="vision-title" className="glass-card-title">
+                  Product Vision
+                </h2>
+                <p id="vision-subtitle" className="glass-card-subtitle">
+                  Define what you're building and why
+                </p>
+              </div>
+            </div>
+            <div id="vision-body" className="glass-card-body glass-scroll">
+              {productData.overview ? (
+                <ProductOverviewCard overview={productData.overview} />
+              ) : (
+                <EmptyState type="overview" />
+              )}
+            </div>
+          </div>
+
+          {/* Right Column: Roadmap */}
+          <div id="product-roadmap-panel" className="glass-card">
+            <div id="roadmap-header" className="glass-card-header">
+              <div id="roadmap-icon-wrapper" className="glass-card-icon">
+                <Map id="roadmap-icon" />
+              </div>
+              <div id="roadmap-header-text">
+                <h2 id="roadmap-title" className="glass-card-title">
+                  Roadmap
+                </h2>
+                <p id="roadmap-subtitle" className="glass-card-subtitle">
+                  Break down into development sections
+                </p>
+              </div>
+            </div>
+            <div id="roadmap-body" className="glass-card-body glass-scroll">
+              {productData.roadmap ? (
+                <SectionsCard
+                  roadmap={productData.roadmap}
+                  onSectionClick={(sectionId) => navigate(`/sections/${sectionId}`)}
+                />
+              ) : (
+                <EmptyState type="roadmap" />
+              )}
+            </div>
+            {allStepsComplete && (
+              <div id="roadmap-footer" className="glass-card-footer">
+                <NextPhaseButton nextPhase="data-model" />
+              </div>
             )}
-          </StepIndicator>
+          </div>
         </div>
-
-        {/* Step 2: Roadmap / Sections Definition */}
-        <div id="step-roadmap">
-          <StepIndicator step={2} status={stepStatuses[1]} isLast={!allStepsComplete}>
-            {productData.roadmap ? (
-              <SectionsCard
-                roadmap={productData.roadmap}
-                onSectionClick={(sectionId) => navigate(`/sections/${sectionId}`)}
-              />
-            ) : (
-              <EmptyState type="roadmap" />
-            )}
-          </StepIndicator>
-        </div>
-
-        {/* Next Phase Button - shown when all steps complete */}
-        {allStepsComplete && (
-          <StepIndicator step={3} status="current" isLast>
-            <NextPhaseButton nextPhase="data-model" />
-          </StepIndicator>
-        )}
       </div>
     </AppLayout>
   )

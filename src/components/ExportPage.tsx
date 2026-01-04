@@ -1,7 +1,5 @@
-import { useMemo } from 'react'
-import { Check, AlertTriangle, FileText, FolderTree, ChevronDown, Download, Package, Trash2 } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
+import { useMemo, useState } from 'react'
+import { Check, AlertTriangle, FileText, FolderTree, Download, Package, Trash2, Sparkles, Zap, Palette, Layers, Terminal, BookOpen } from 'lucide-react'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,6 +17,7 @@ import { getAllSectionIds, getSectionScreenDesigns } from '@/lib/section-loader'
 
 export function ExportPage() {
   const productData = useMemo(() => loadProductData(), [])
+  const [activeTab, setActiveTab] = useState<'included' | 'howto'>('included')
 
   // Get section stats
   const sectionStats = useMemo(() => {
@@ -38,346 +37,311 @@ export function ExportPage() {
   const hasShell = !!productData.shell
   const hasSections = sectionStats.sectionsWithScreenDesigns > 0
 
+  const completedCount = [hasOverview, hasRoadmap, hasDataModel, hasDesignSystem, hasShell, hasSections].filter(Boolean).length
+  const totalCount = 6
   const requiredComplete = hasOverview && hasRoadmap && hasSections
 
   // Check for export zip
   const exportZipAvailable = hasExportZip()
   const exportZipUrl = getExportZipUrl()
 
+  const checklistItems = [
+    { id: 'overview', label: 'Product Overview', isComplete: hasOverview, icon: FileText, description: 'Vision, goals, and target audience' },
+    { id: 'roadmap', label: 'Product Roadmap', isComplete: hasRoadmap, icon: Layers, description: 'Milestones and section planning' },
+    { id: 'dataModel', label: 'Data Model', isComplete: hasDataModel, icon: Zap, description: 'Entities and relationships' },
+    { id: 'designSystem', label: 'Design System', isComplete: hasDesignSystem, icon: Palette, description: 'Colors, typography, and tokens' },
+    { id: 'shell', label: 'Application Shell', isComplete: hasShell, icon: Layers, description: 'Navigation and layout structure' },
+    { id: 'sections', label: `Screen Designs (${sectionStats.sectionsWithScreenDesigns}/${sectionStats.sectionCount})`, isComplete: hasSections, icon: Sparkles, description: 'UI mockups for each section' },
+  ]
+
+  const packageContents = [
+    {
+      title: 'Prompts',
+      description: 'Ready-to-use prompts for your coding agent',
+      items: ['one-shot-prompt.md', 'section-prompt.md'],
+      icon: Terminal,
+      color: 'lime'
+    },
+    {
+      title: 'Instructions',
+      description: 'Implementation guides',
+      items: ['product-overview.md', 'milestones/'],
+      icon: BookOpen,
+      color: 'amber'
+    },
+    {
+      title: 'Design System',
+      description: 'Styling configuration',
+      items: ['CSS tokens', 'Tailwind config'],
+      icon: Palette,
+      color: 'sky'
+    },
+    {
+      title: 'Components',
+      description: 'React components',
+      items: ['Shell', 'Sections', 'Screenshots'],
+      icon: Layers,
+      color: 'violet'
+    },
+  ]
+
   return (
     <AppLayout>
-      <div className="space-y-6">
-        {/* Page intro */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-semibold text-stone-900 dark:text-stone-100 mb-2">
-            {exportZipAvailable ? 'Ready for implementation!' : 'Export'}
-          </h1>
-          <p className="text-stone-600 dark:text-stone-400">
-            {exportZipAvailable
-              ? 'Download your product design package and implement it in your codebase using the provided handoff prompts and assets.'
-              : 'Generate a complete handoff package for your development team.'}
-          </p>
-        </div>
+      {/* Page Header */}
+      <div id="export-page-header" className="kiosk-page-header">
+        <h1 id="export-title" className="text-2xl font-semibold text-stone-900 dark:text-stone-100">
+          Export
+        </h1>
+        <p id="export-description" className="text-stone-600 dark:text-stone-400">
+          Generate a complete handoff package for your development team.
+        </p>
+      </div>
 
-        {/* Status - only show if zip not available */}
-        {!exportZipAvailable && (
-          <Card className="border-stone-200 dark:border-stone-700 shadow-sm">
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold text-stone-900 dark:text-stone-100 flex items-center gap-2">
-                {requiredComplete ? (
-                  <>
-                    <div className="w-6 h-6 rounded-full bg-lime-100 dark:bg-lime-900/30 flex items-center justify-center">
-                      <Check className="w-4 h-4 text-lime-600 dark:text-lime-400" strokeWidth={2.5} />
-                    </div>
-                    Ready to Export
-                  </>
-                ) : (
-                  <>
-                    <div className="w-6 h-6 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
-                      <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400" strokeWidth={2.5} />
-                    </div>
-                    Not Ready
-                  </>
-                )}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-1">
-                <ChecklistItem label="Product Overview" isComplete={hasOverview} />
-                <ChecklistItem label="Product Roadmap" isComplete={hasRoadmap} />
-                <ChecklistItem label="Data Model" isComplete={hasDataModel} />
-                <ChecklistItem label="Design System" isComplete={hasDesignSystem} />
-                <ChecklistItem label="Application Shell" isComplete={hasShell} />
-                <ChecklistItem
-                  label={`Sections with screen designs (${sectionStats.sectionsWithScreenDesigns}/${sectionStats.sectionCount})`}
-                  isComplete={hasSections}
-                />
-              </div>
-            </CardContent>
-          </Card>
-        )}
+      {/* Page Body - Two Column Layout */}
+      <div id="export-page-body" className="kiosk-page-body">
+        <div id="export-two-column" className="export-two-column">
 
-        {/* Export command */}
-        {requiredComplete && (
-          <Card className="border-stone-200 dark:border-stone-700 shadow-sm">
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold text-stone-900 dark:text-stone-100 flex items-center gap-2">
-                {exportZipAvailable ? (
-                  <>
-                    <div className="w-6 h-6 rounded-full bg-lime-100 dark:bg-lime-900/30 flex items-center justify-center">
-                      <Check className="w-4 h-4 text-lime-600 dark:text-lime-400" strokeWidth={2.5} />
-                    </div>
-                    Export Package is Ready
-                  </>
-                ) : (
-                  'Generate Export Package'
-                )}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {exportZipAvailable && exportZipUrl ? (
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3 p-4 bg-lime-50 dark:bg-lime-900/20 rounded-lg border border-lime-200 dark:border-lime-800">
-                    <div className="w-10 h-10 rounded-full bg-lime-100 dark:bg-lime-900/40 flex items-center justify-center shrink-0">
-                      <Package className="w-5 h-5 text-lime-600 dark:text-lime-400" strokeWidth={1.5} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-stone-900 dark:text-stone-100">
-                        Download & use in your codebase
-                      </p>
-                      <p className="text-sm text-stone-500 dark:text-stone-400">
-                        product-plan.zip
-                      </p>
-                    </div>
-                    <a
-                      href={exportZipUrl}
-                      download="product-plan.zip"
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-lime-600 hover:bg-lime-700 text-white font-medium text-sm rounded-md transition-colors shrink-0"
+          {/* LEFT COLUMN: Checklist + Action */}
+          <div id="export-left-column" className="export-left-column">
+            {/* Checklist Grid */}
+            <div id="export-checklist-section" className="export-checklist-section">
+              <h3 id="export-checklist-label" className="export-section-label">
+                <FolderTree className="w-4 h-4" strokeWidth={1.5} />
+                Completion Checklist
+              </h3>
+              <div id="export-checklist-grid" className="export-checklist-grid">
+                {checklistItems.map((item) => {
+                  const Icon = item.icon
+                  return (
+                    <div
+                      key={item.id}
+                      id={`checklist-item-${item.id}`}
+                      className={`export-checklist-item ${item.isComplete ? 'is-complete' : 'is-pending'}`}
                     >
-                      <Download className="w-4 h-4" strokeWidth={2} />
-                      Download
-                    </a>
-                  </div>
-                  <p className="text-sm text-stone-500 dark:text-stone-400">
-                    To regenerate, run <code className="font-mono text-stone-700 dark:text-stone-300">/export-product</code> again.
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <p className="text-stone-600 dark:text-stone-400">
-                    Run the following command to generate a complete export package with all components, types, and handoff documentation:
-                  </p>
-                  <div className="bg-stone-100 dark:bg-stone-800 rounded-md px-4 py-3">
-                    <code className="text-sm font-mono text-stone-800 dark:text-stone-200">
-                      /export-product
-                    </code>
-                  </div>
-                </div>
-              )}
-
-              {/* What's included */}
-              <div className="pt-4 border-t border-stone-200 dark:border-stone-700">
-                <h4 className="text-sm font-medium text-stone-500 dark:text-stone-400 uppercase tracking-wide mb-4 flex items-center gap-2">
-                  <FolderTree className="w-4 h-4" strokeWidth={1.5} />
-                  What's Included
-                </h4>
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <ExportItem
-                    title="Ready-to-Use Prompts"
-                    description="Pre-written prompts to copy/paste into your coding agent."
-                    items={['one-shot-prompt.md', 'section-prompt.md']}
-                  />
-                  <ExportItem
-                    title="Instructions"
-                    description="Detailed implementation guides for your coding agent."
-                    items={['product-overview.md', 'one-shot-instructions.md', 'incremental/ (milestones)']}
-                  />
-                  <ExportItem
-                    title="Design System"
-                    description="Colors, typography, and styling configuration for consistent branding."
-                    items={['CSS tokens', 'Tailwind config', 'Font setup']}
-                  />
-                  <ExportItem
-                    title="Data Model"
-                    description="Entity definitions and sample data for your application."
-                    items={['TypeScript types', 'Sample data', 'Entity docs']}
-                  />
-                  <ExportItem
-                    title="Components"
-                    description="React components and visual references for each section."
-                    items={['Shell components', 'Section components', 'Screenshots']}
-                  />
-                  <ExportItem
-                    title="Test Instructions"
-                    description="Framework-agnostic test specs for TDD implementation."
-                    items={['tests.md per section', 'User flow tests', 'Empty state tests']}
-                  />
-                </div>
+                      <div id={`checklist-icon-${item.id}`} className="export-checklist-icon">
+                        {item.isComplete ? (
+                          <Check className="w-4 h-4" strokeWidth={2.5} />
+                        ) : (
+                          <Icon className="w-4 h-4" strokeWidth={1.5} />
+                        )}
+                      </div>
+                      <div id={`checklist-content-${item.id}`} className="export-checklist-content">
+                        <span id={`checklist-label-${item.id}`} className="export-checklist-label">{item.label}</span>
+                        <span id={`checklist-desc-${item.id}`} className="export-checklist-desc">{item.description}</span>
+                      </div>
+                    </div>
+                  )
+                })}
               </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* How to use */}
-        <Card className="border-stone-200 dark:border-stone-700 shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold text-stone-900 dark:text-stone-100 flex items-center gap-2">
-              <FileText className="w-5 h-5 text-stone-500 dark:text-stone-400" strokeWidth={1.5} />
-              How to Use the Export
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Option A - Incremental (Recommended) */}
-            <Collapsible>
-              <CollapsibleTrigger className="flex items-start justify-between w-full text-left group">
-                <div className="flex-1">
-                  <h4 className="font-medium text-stone-900 dark:text-stone-100">
-                    Option A: Incremental (Recommended)
-                  </h4>
-                  <p className="text-sm text-stone-500 dark:text-stone-400 mt-1">
-                    Build milestone by milestone for better control and easier debugging.
-                  </p>
-                </div>
-                <ChevronDown className="w-4 h-4 text-stone-400 dark:text-stone-500 mt-1 shrink-0 transition-transform group-data-[state=open]:rotate-180" strokeWidth={1.5} />
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <ol className="text-sm text-stone-600 dark:text-stone-400 space-y-2 list-decimal list-inside mt-4 pl-1">
-                  <li>Copy the <code className="font-mono text-stone-800 dark:text-stone-200">product-plan/</code> folder into your codebase</li>
-                  <li>Start with Foundation (<code className="font-mono text-stone-800 dark:text-stone-200">instructions/incremental/01-foundation.md</code>)</li>
-                  <li>Then Shell (<code className="font-mono text-stone-800 dark:text-stone-200">instructions/incremental/02-shell.md</code>)</li>
-                  <li>
-                    For each section:
-                    <ul className="mt-1.5 ml-5 space-y-1">
-                      <li className="flex items-center gap-2">
-                        <span className="w-1 h-1 rounded-full bg-stone-400 dark:bg-stone-500" />
-                        Open <code className="font-mono text-stone-800 dark:text-stone-200">prompts/section-prompt.md</code>
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <span className="w-1 h-1 rounded-full bg-stone-400 dark:bg-stone-500" />
-                        Fill in the section variables at the top (SECTION_NAME, SECTION_ID, NN)
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <span className="w-1 h-1 rounded-full bg-stone-400 dark:bg-stone-500" />
-                        Copy/paste the prompt into your AI coding agent
-                      </li>
-                    </ul>
-                  </li>
-                  <li>Review and test after each milestone before moving to the next</li>
-                </ol>
-              </CollapsibleContent>
-            </Collapsible>
-
-            <div className="border-t border-stone-200 dark:border-stone-700" />
-
-            {/* Option B - One-Shot */}
-            <Collapsible>
-              <CollapsibleTrigger className="flex items-start justify-between w-full text-left group">
-                <div className="flex-1">
-                  <h4 className="font-medium text-stone-900 dark:text-stone-100">
-                    Option B: One-Shot
-                  </h4>
-                  <p className="text-sm text-stone-500 dark:text-stone-400 mt-1">
-                    Build the entire app in one session using a pre-written prompt.
-                  </p>
-                </div>
-                <ChevronDown className="w-4 h-4 text-stone-400 dark:text-stone-500 mt-1 shrink-0 transition-transform group-data-[state=open]:rotate-180" strokeWidth={1.5} />
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <ol className="text-sm text-stone-600 dark:text-stone-400 space-y-2 list-decimal list-inside mt-4 pl-1">
-                  <li>Copy the <code className="font-mono text-stone-800 dark:text-stone-200">product-plan/</code> folder into your codebase</li>
-                  <li>Open <code className="font-mono text-stone-800 dark:text-stone-200">prompts/one-shot-prompt.md</code></li>
-                  <li>Add any additional notes to the prompt (tech stack preferences, etc.)</li>
-                  <li>Copy/paste the prompt into your AI coding agent</li>
-                  <li>Answer the agent's clarifying questions about auth, user modeling, etc.</li>
-                  <li>Let the agent plan and implement everything</li>
-                </ol>
-              </CollapsibleContent>
-            </Collapsible>
-          </CardContent>
-        </Card>
-
-        {/* Danger Zone */}
-        <div className="pt-8 border-t border-stone-200 dark:border-stone-800">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-medium text-stone-900 dark:text-stone-100">Danger Zone</h3>
-              <p className="text-sm text-stone-500 dark:text-stone-400">
-                Irreversible actions for project management
-              </p>
             </div>
 
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/10 rounded-md transition-colors">
-                  <Trash2 className="w-4 h-4" />
-                  Reset Project
-                </button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete your entire product design, including:
-                    <ul className="list-disc list-inside mt-2 space-y-1">
-                      <li>Product definition and roadmap</li>
-                      <li>Design system (colors/typography)</li>
-                      <li>All section screen designs</li>
-                      <li>Application shell</li>
-                    </ul>
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                    className="bg-red-600 hover:bg-red-700 text-white"
-                    onClick={async () => {
-                      try {
-                        const res = await fetch('/__reset-project', { method: 'DELETE' })
-                        if (res.ok) {
-                          window.location.reload()
-                        } else {
-                          console.error('Failed to reset project')
-                          alert('Failed to reset project')
-                        }
-                      } catch (err) {
-                        console.error('Error resetting project:', err)
-                        alert('Error resetting project')
-                      }
-                    }}
+            {/* Package Preview / Action Section */}
+            <div id="export-action-section" className="export-action-section">
+              {exportZipAvailable && exportZipUrl ? (
+                <div id="export-download-panel" className="export-download-panel">
+                  <div id="export-download-badge" className="export-download-badge">
+                    <Package className="w-6 h-6" strokeWidth={1.5} />
+                  </div>
+                  <div id="export-download-info" className="export-download-info">
+                    <h3 id="export-download-title" className="export-download-title">Package Ready</h3>
+                    <p id="export-download-file" className="export-download-file">product-plan.zip</p>
+                  </div>
+                  <a
+                    id="export-download-btn"
+                    href={exportZipUrl}
+                    download="product-plan.zip"
+                    className="export-download-btn"
                   >
-                    Reset Everything
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+                    <Download className="w-5 h-5" strokeWidth={2} />
+                    Download
+                  </a>
+                </div>
+              ) : requiredComplete ? (
+                <div id="export-generate-panel" className="export-generate-panel">
+                  <div id="export-generate-icon" className="export-generate-icon">
+                    <Terminal className="w-6 h-6" strokeWidth={1.5} />
+                  </div>
+                  <div id="export-generate-info" className="export-generate-info">
+                    <h3 id="export-generate-title" className="export-generate-title">Generate Package</h3>
+                    <p id="export-generate-desc" className="export-generate-desc">Run the export command:</p>
+                  </div>
+                  <code id="export-generate-cmd" className="export-generate-cmd">/export-product</code>
+                </div>
+              ) : null}
+            </div>
+
+            {/* Danger Zone */}
+            <div id="export-danger-section" className="export-danger-section">
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <button id="export-reset-btn" className="export-reset-btn">
+                    <Trash2 className="w-4 h-4" />
+                    <span>Reset Project</span>
+                  </button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete your entire product design.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      className="bg-red-600 hover:bg-red-700 text-white"
+                      onClick={async () => {
+                        try {
+                          const res = await fetch('/__reset-project', { method: 'DELETE' })
+                          if (res.ok) {
+                            window.location.reload()
+                          } else {
+                            console.error('Failed to reset project')
+                            alert('Failed to reset project')
+                          }
+                        } catch (err) {
+                          console.error('Error resetting project:', err)
+                          alert('Error resetting project')
+                        }
+                      }}
+                    >
+                      Reset Everything
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          </div>
+
+          {/* RIGHT COLUMN: Status + Tabbed Info */}
+          <div id="export-right-column" className="export-right-column">
+            {/* Status Section */}
+            <div id="export-status-section" className="export-status-section">
+              <div id="export-progress-ring" className="export-progress-ring">
+                <svg viewBox="0 0 100 100" className="export-ring-svg">
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="42"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="8"
+                    className="text-stone-200 dark:text-stone-700"
+                  />
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="42"
+                    fill="none"
+                    stroke="url(#progressGradient)"
+                    strokeWidth="8"
+                    strokeLinecap="round"
+                    strokeDasharray={`${(completedCount / totalCount) * 264} 264`}
+                    transform="rotate(-90 50 50)"
+                    className="export-ring-progress"
+                  />
+                  <defs>
+                    <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#84cc16" />
+                      <stop offset="100%" stopColor="#65a30d" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+                <div id="export-ring-content" className="export-ring-content">
+                  <span id="export-ring-count" className="export-ring-count">{completedCount}</span>
+                  <span id="export-ring-total" className="export-ring-total">/ {totalCount}</span>
+                </div>
+              </div>
+              <div id="export-status-text" className="export-status-text">
+                {requiredComplete ? (
+                  <>
+                    <div id="export-status-icon-ready" className="export-status-icon is-ready">
+                      <Check className="w-5 h-5" strokeWidth={2.5} />
+                    </div>
+                    <h2 id="export-status-title" className="export-status-title">Ready to Export</h2>
+                    <p id="export-status-desc" className="export-status-desc">All required items complete</p>
+                  </>
+                ) : (
+                  <>
+                    <div id="export-status-icon-pending" className="export-status-icon is-pending">
+                      <AlertTriangle className="w-5 h-5" strokeWidth={2} />
+                    </div>
+                    <h2 id="export-status-title" className="export-status-title">Not Ready</h2>
+                    <p id="export-status-desc" className="export-status-desc">Complete required items first</p>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Tabbed Section: What's Included / How to Use */}
+            <div id="export-tabs-panel" className="export-tabs-panel">
+              {/* Tab Headers */}
+              <div id="export-tabs-header" className="export-tabs-header">
+                <button
+                  id="export-tab-included"
+                  className={`export-tab-btn ${activeTab === 'included' ? 'is-active' : ''}`}
+                  onClick={() => setActiveTab('included')}
+                >
+                  <FolderTree className="w-4 h-4" strokeWidth={1.5} />
+                  <span>What's Included</span>
+                </button>
+                <button
+                  id="export-tab-howto"
+                  className={`export-tab-btn ${activeTab === 'howto' ? 'is-active' : ''}`}
+                  onClick={() => setActiveTab('howto')}
+                >
+                  <BookOpen className="w-4 h-4" strokeWidth={1.5} />
+                  <span>How to Use</span>
+                </button>
+              </div>
+
+              {/* Tab Content */}
+              <div id="export-tabs-content" className="export-tabs-content">
+                {activeTab === 'included' && (
+                  <div id="export-contents-grid" className="export-contents-grid">
+                    {packageContents.map((pkg, index) => {
+                      const Icon = pkg.icon
+                      return (
+                        <div
+                          key={index}
+                          id={`export-content-${pkg.title.toLowerCase().replace(/\s+/g, '-')}`}
+                          className={`export-content-card accent-${pkg.color}`}
+                        >
+                          <div id={`export-content-header-${index}`} className="export-content-header">
+                            <Icon className="w-5 h-5" strokeWidth={1.5} />
+                            <div id={`export-content-meta-${index}`} className="export-content-meta">
+                              <h4 id={`export-content-title-${index}`} className="export-content-title">{pkg.title}</h4>
+                              <p id={`export-content-desc-${index}`} className="export-content-desc">{pkg.description}</p>
+                            </div>
+                          </div>
+                          <ul id={`export-content-list-${index}`} className="export-content-list">
+                            {pkg.items.map((item, i) => (
+                              <li key={i} id={`export-content-item-${index}-${i}`} className="export-content-item">{item}</li>
+                            ))}
+                        </ul>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
+
+                {activeTab === 'howto' && (
+                  <div id="export-howto-content" className="export-howto-content">
+                    <div id="export-howto-incremental" className="export-howto-card">
+                      <h4 id="export-howto-inc-title">Incremental</h4>
+                      <p id="export-howto-inc-desc">Build milestone by milestone using <code>instructions/incremental/</code> files</p>
+                    </div>
+                    <div id="export-howto-oneshot" className="export-howto-card">
+                      <h4 id="export-howto-one-title">One-Shot</h4>
+                      <p id="export-howto-one-desc">Use <code>prompts/one-shot-prompt.md</code> to build everything at once</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </AppLayout>
-  )
-}
-
-interface ChecklistItemProps {
-  label: string
-  isComplete: boolean
-}
-
-function ChecklistItem({ label, isComplete }: ChecklistItemProps) {
-  return (
-    <div className="flex items-center gap-2 py-1">
-      {isComplete ? (
-        <div className="w-4 h-4 rounded bg-stone-200 dark:bg-stone-700 flex items-center justify-center">
-          <Check className="w-2.5 h-2.5 text-stone-600 dark:text-stone-400" strokeWidth={3} />
-        </div>
-      ) : (
-        <div className="w-4 h-4 rounded border-2 border-amber-400 dark:border-amber-500" />
-      )}
-      <span className="text-sm text-stone-700 dark:text-stone-300">
-        {label}
-      </span>
-    </div>
-  )
-}
-
-interface ExportItemProps {
-  title: string
-  description: string
-  items: string[]
-}
-
-function ExportItem({ title, description, items }: ExportItemProps) {
-  return (
-    <div className="bg-stone-50 dark:bg-stone-800/50 rounded-lg p-4">
-      <h4 className="font-medium text-stone-900 dark:text-stone-100 mb-1">{title}</h4>
-      <p className="text-xs text-stone-500 dark:text-stone-400 mb-3">{description}</p>
-      <ul className="text-sm text-stone-600 dark:text-stone-400 space-y-1">
-        {items.map((item, index) => (
-          <li key={index} className="flex items-center gap-2">
-            <span className="w-1 h-1 rounded-full bg-stone-400 dark:bg-stone-500" />
-            {item}
-          </li>
-        ))}
-      </ul>
-    </div>
   )
 }

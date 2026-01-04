@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Moon, Sun } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 
 type Theme = 'light' | 'dark' | 'system'
 
-export function ThemeToggle() {
+export const ThemeToggle = () => {
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window !== 'undefined') {
       return (localStorage.getItem('theme') as Theme) || 'system'
@@ -50,18 +49,18 @@ export function ThemeToggle() {
   const isDark = theme === 'dark' || (theme === 'system' && typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches)
 
   return (
-    <Button
-      variant="ghost"
-      size="icon"
+    <button
+      id="theme-toggle-btn"
       onClick={toggleTheme}
-      className="w-8 h-8 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100"
+      className="glass-theme-toggle"
       title={`Theme: ${theme}`}
+      aria-label={`Current theme: ${theme}. Click to change.`}
     >
       {isDark ? (
-        <Moon className="w-4 h-4" strokeWidth={1.5} />
+        <Moon id="theme-icon-moon" className="glass-theme-icon" strokeWidth={1.5} />
       ) : (
-        <Sun className="w-4 h-4" strokeWidth={1.5} />
+        <Sun id="theme-icon-sun" className="glass-theme-icon" strokeWidth={1.5} />
       )}
-    </Button>
+    </button>
   )
 }
