@@ -3,321 +3,178 @@ description: Create screen designs for a section of your product
 ---
 # Design Screen
 
-You are helping the user create a screen design for a section of their product. The screen design will be a props-based React component that can be exported and integrated into any React codebase.
+You are helping the user create Svelte 5 components for a section of their product. Components will render in the right preview panel.
 
 ## Step 1: Check Prerequisites
 
-First, identify the target section and verify that `spec.md`, `data.json`, and `types.ts` all exist.
+1. Read `/product/product-roadmap.md` for sections
+2. Check for `/product/sections/[section-id]/spec.md`
 
-Read `/product/product-roadmap.md` to get the list of available sections.
+If only one section, auto-select it. Otherwise ask:
 
-If there's only one section, auto-select it. If there are multiple sections, follow the **Questioning & Data Gathering** guidelines:
+"Which section would you like to design?
 
-"Which section would you like to create a screen design for?
-
-Reasoning: Designing one section at a time allows us to deep-dive into its specific user flows and ensure the UI matches the established requirements.
-
-1. Please select a section:
+1. Please select:
 A. [Section 1 Title]
 B. [Section 2 Title]
 C. [Section 3 Title]"
 
-Then verify all required files exist:
+If spec.md missing:
+"Run `/shape-section` first to define the UI specification."
 
-- `product/sections/[section-id]/spec.md`
-- `product/sections/[section-id]/data.json`
-- `product/sections/[section-id]/types.ts`
+## Step 2: Check Design Tokens
 
-If spec.md doesn't exist:
+Read design tokens if they exist:
+- `/product/design-system/colors.json`
+- `/product/design-system/typography.json`
+- `/product/design-system/motion.json`
 
-"I don't see a specification for **[Section Title]** yet. Please run `/shape-section` first to define the section's requirements."
-
-If data.json or types.ts don't exist:
-
-"I don't see sample data for **[Section Title]** yet. Please run `/sample-data` first to create sample data and types for the screen designs."
-
-Stop here if any file is missing.
-
-## Step 2: Check for Design System and Shell
-
-Check for optional enhancements:
-
-**Design Tokens:**
-- Check if `/product/design-system/colors.json` exists
-- Check if `/product/design-system/typography.json` exists
-
-If design tokens exist, read them and use them for styling. If they don't exist, show a warning:
-
-"Note: Design tokens haven't been defined yet. I'll use default styling, but for consistent branding, consider running `/design-tokens` first."
-
-**Shell:**
-- Check if `src/shell/components/AppShell.tsx` exists
-
-If shell exists, the screen design will render inside the shell in Design OS. If not, show a warning:
-
-"Note: An application shell hasn't been designed yet. The screen design will render standalone. Consider running `/design-shell` first to see section screen designs in the full app context."
+If missing, warn:
+"Note: Run `/design-tokens` for consistent styling."
 
 ## Step 3: Analyze Requirements
 
-Read and analyze all three files:
+Read the spec and identify needed views:
+- List/dashboard view
+- Detail view
+- Form/create view
 
-1. **spec.md** - Understand the user flows and UI requirements
-2. **data.json** - Understand the data structure and sample content
-3. **types.ts** - Understand the TypeScript interfaces and available callbacks
+"The specification suggests [N] views for **[Section]**.
 
-Identify what views are needed based on the spec. Common patterns:
+1. Which view first?
+A. [View 1] (Main list/dashboard)
+B. [View 2] (Detail/profile)
+C. [View 3] (Create/edit form)"
 
-- List/dashboard view (showing multiple items)
-- Detail view (showing a single item)
-- Form/create view (for adding/editing)
+## Step 4: Create Svelte 5 Component
 
-## Step 4: Clarify the Screen Design Scope
+Create `src/sections/[section-id]/[Component].svelte`:
 
-If the spec implies multiple views, use the AskUserQuestion tool to confirm which view to build first following the **Questioning & Data Gathering** guidelines:
+```svelte
+<script lang="ts">
+  interface Props {
+    items: Item[]
+    onSelect?: (id: string) => void
+    onCreate?: () => void
+  }
 
-"The specification suggests a few different views for **[Section Title]**.
+  let { items, onSelect, onCreate }: Props = $props()
+</script>
 
-Reasoning: Building the primary view first establishes the foundational UI patterns that we can then reuse for secondary screens.
+<div id="[component]-root" class="component-grid">
+  {#each items as item (item.id)}
+    <button
+      id="item-{item.id}"
+      class="item-card"
+      onclick={() => onSelect?.(item.id)}
+    >
+      {item.name}
+    </button>
+  {/each}
+</div>
 
-1. Which view should I create first?
-A. [View 1] (e.g., Main Dashboard/List)
-B. [View 2] (e.g., Detail View/Profile)
-C. [View 3] (e.g., Creation Wizard/Form)"
+<style>
+  .component-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+  }
 
-If there's only one obvious view, proceed directly.
+  .item-card {
+    padding: 16px;
+    background: var(--surface);
+    transition: transform 0.15s ease-out;
+  }
 
-## Step 5: Invoke the Frontend Design Skill
-
-Before creating the screen design, read the `frontend-design` skill to ensure high-quality design output.
-
-Read the file at `.claude/skills/frontend-design/SKILL.md` and follow its guidance for creating distinctive, production-grade interfaces.
-
-## Step 6: Create the Props-Based Component
-
-Create the main component file at `src/sections/[section-id]/components/[ViewName].tsx`.
-
-### Component Structure
-
-The component MUST:
-
-- Import types from the types.ts file
-- Accept all data via props (never import data.json directly)
-- Accept callback props for all actions
-- Be fully self-contained and portable
-
-Example:
-
-```tsx
-import type { InvoiceListProps } from '@/../product/sections/[section-id]/types'
-
-export function InvoiceList({
-  invoices,
-  onView,
-  onEdit,
-  onDelete,
-  onCreate
-}: InvoiceListProps) {
-  return (
-    <div className="max-w-4xl mx-auto">
-      {/* Component content here */}
-
-      {/* Example: Using a callback */}
-      <button onClick={onCreate}>Create Invoice</button>
-
-      {/* Example: Mapping data with callbacks */}
-      {invoices.map(invoice => (
-        <div key={invoice.id}>
-          <span>{invoice.clientName}</span>
-          <button onClick={() => onView?.(invoice.id)}>View</button>
-          <button onClick={() => onEdit?.(invoice.id)}>Edit</button>
-          <button onClick={() => onDelete?.(invoice.id)}>Delete</button>
-        </div>
-      ))}
-    </div>
-  )
-}
+  .item-card:hover {
+    transform: translateY(-2px);
+  }
+</style>
 ```
 
-### Design Requirements
+## Component Requirements
 
-- **Mobile responsive:** Use Tailwind responsive prefixes (`sm:`, `md:`, `lg:`) and ensure the design layout works gracefully on mobile, tablet and desktop screen sizes.
-- **Light & dark mode:** Use `dark:` variants for all colors
-- **Use design tokens:** If defined, apply the product's color palette and typography
-- **Follow the frontend-design skill:** Create distinctive, memorable interfaces
+### Props Pattern
+- Use `$props()` rune for all props
+- Optional callbacks with `?` and `?.()` calls
+- Type all props with interfaces
 
-### Applying Design Tokens
+### Styling Rules
+- **CSS Grid only** (no flexbox)
+- **Unique IDs** on all elements
+- **CSS transitions** for hover/focus states
+- **Dark mode** support via `dark:` classes or CSS vars
 
-**If `/product/design-system/colors.json` exists:**
-- Use the primary color for buttons, links, and key accents
-- Use the secondary color for tags, highlights, secondary elements
-- Use the neutral color for backgrounds, text, and borders
-- Example: If primary is `lime`, use `lime-500`, `lime-600`, etc. for primary actions
-
-**If `/product/design-system/typography.json` exists:**
-- Note the font choices for reference in comments
-- The fonts will be applied at the app level, but use appropriate font weights
-
-**If design tokens don't exist:**
-- Fall back to `stone` for neutrals and `lime` for accents (Design OS defaults)
+### Motion
+Apply motion tokens:
+```css
+.element {
+  transition: all var(--duration-fast) var(--easing-out);
+}
+```
 
 ### What to Include
-
-- Implement ALL user flows and UI requirements from the spec
-- Use the prop data (not hardcoded values)
-- Include realistic UI states (hover, active, etc.)
-- Use the callback props for all interactive elements
-- Handle optional callbacks with optional chaining: `onClick={() => onDelete?.(id)}`
+- All UI requirements from spec
+- Hover, focus, active states
+- Loading states if applicable
+- Empty states
 
 ### What NOT to Include
+- No data fetching
+- No routing logic
+- No navigation chrome
 
-- No `import data from` statements - data comes via props
-- No features not specified in the spec
-- No routing logic - callbacks handle navigation intent
-- No navigation elements (shell handles navigation)
+## Step 5: Animation Pass
 
-## Step 7: Create Sub-Components (If Needed)
+After basic layout, add motion:
 
-For complex views, break down into sub-components. Each sub-component should also be props-based.
+"Let's add animations. For **[Component]**:
 
-Create sub-components at `src/sections/[section-id]/components/[SubComponent].tsx`.
+1. Entry animation?
+A. Fade in (subtle)
+B. Slide up + fade (engaging)
+C. Stagger children (dynamic)
 
-Example:
+2. Hover effect?
+A. Scale up (1.02)
+B. Lift shadow
+C. Color shift"
 
-```tsx
-import type { Invoice } from '@/../product/sections/[section-id]/types'
+Apply Svelte transitions:
+```svelte
+<script>
+  import { fade, fly } from 'svelte/transition'
+</script>
 
-interface InvoiceRowProps {
-  invoice: Invoice
-  onView?: () => void
-  onEdit?: () => void
-  onDelete?: () => void
-}
-
-export function InvoiceRow({ invoice, onView, onEdit, onDelete }: InvoiceRowProps) {
-  return (
-    <div className="flex items-center justify-between p-4 border-b">
-      <div>
-        <p className="font-medium">{invoice.clientName}</p>
-        <p className="text-sm text-stone-500">{invoice.invoiceNumber}</p>
-      </div>
-      <div className="flex gap-2">
-        <button onClick={onView}>View</button>
-        <button onClick={onEdit}>Edit</button>
-        <button onClick={onDelete}>Delete</button>
-      </div>
-    </div>
-  )
-}
+<div transition:fade={{ duration: 200 }}>
+  Content
+</div>
 ```
 
-Then import and use in the main component:
+## Step 6: Confirm Completion
 
-```tsx
-import { InvoiceRow } from './InvoiceRow'
+"I've created the component for **[Section]**:
 
-export function InvoiceList({ invoices, onView, onEdit, onDelete }: InvoiceListProps) {
-  return (
-    <div>
-      {invoices.map(invoice => (
-        <InvoiceRow
-          key={invoice.id}
-          invoice={invoice}
-          onView={() => onView?.(invoice.id)}
-          onEdit={() => onEdit?.(invoice.id)}
-          onDelete={() => onDelete?.(invoice.id)}
-        />
-      ))}
-    </div>
-  )
-}
-```
+**File:** `src/sections/[section-id]/[Component].svelte`
 
-## Step 8: Create the Preview Wrapper
+**Features:**
+- Svelte 5 with `$props()` rune
+- CSS Grid layout
+- [Hover effect]
+- [Entry animation]
+- Dark mode support
 
-Create a preview wrapper at `src/sections/[section-id]/[ViewName].tsx` (note: this is in the section root, not in components/).
+The component will appear in the Preview Panel. Select it from the dropdown to view.
 
-This wrapper is what Design OS renders. It imports the sample data and feeds it to the props-based component.
-
-Example:
-
-```tsx
-import data from '@/../product/sections/[section-id]/data.json'
-import { InvoiceList } from './components/InvoiceList'
-
-export default function InvoiceListPreview() {
-  return (
-    <InvoiceList
-      invoices={data.invoices}
-      onView={(id) => console.log('View invoice:', id)}
-      onEdit={(id) => console.log('Edit invoice:', id)}
-      onDelete={(id) => console.log('Delete invoice:', id)}
-      onCreate={() => console.log('Create new invoice')}
-    />
-  )
-}
-```
-
-The preview wrapper:
-
-- Has a `default` export (required for Design OS routing)
-- Imports sample data from data.json
-- Passes data to the component via props
-- Provides console.log handlers for callbacks (for testing interactions)
-- Is NOT exported to the user's codebase - it's only for Design OS
-- **Will render inside the shell** if one has been designed
-
-## Step 9: Create Component Index
-
-Create an index file at `src/sections/[section-id]/components/index.ts` to cleanly export all components.
-
-Example:
-
-```tsx
-export { InvoiceList } from './InvoiceList'
-export { InvoiceRow } from './InvoiceRow'
-// Add other sub-components as needed
-```
-
-## Step 10: Confirm and Next Steps
-
-Let the user know:
-
-"I've created the screen design for **[Section Title]**:
-
-**Exportable components** (props-based, portable):
-
-- `src/sections/[section-id]/components/[ViewName].tsx`
-- `src/sections/[section-id]/components/[SubComponent].tsx` (if created)
-- `src/sections/[section-id]/components/index.ts`
-
-**Preview wrapper** (for Design OS only):
-
-- `src/sections/[section-id]/[ViewName].tsx`
-
-**Important:** Restart your dev server to see the changes.
-
-[If shell exists]: The screen design will render inside your application shell, showing the full app experience.
-
-[If design tokens exist]: I've applied your color palette ([primary], [secondary], [neutral]) and typography choices.
-
-**Next steps:**
-
-- Run `/screenshot-design` to capture a screenshot of this screen design for documentation
-- If the spec calls for additional views, run `/design-screen` again to create them
-- When all sections are complete, run `/export-product` to generate the complete export package"
-
-If the spec indicates additional views are needed:
-
-"The specification also calls for [other view(s)]. Run `/design-screen` again to create those, then `/screenshot-design` to capture each one."
+**Next:**
+- `/refine-ui` to iterate on visual polish
+- `/animate-ui` to add more motion
+- `/design-screen` for additional views"
 
 ## Important Notes
 
-- ALWAYS read the `frontend-design` skill before creating screen designs
-- Components MUST be props-based - never import data.json in exportable components
-- The preview wrapper is the ONLY file that imports data.json
-- Use TypeScript interfaces from types.ts for all props
-- Callbacks should be optional (use `?`) and called with optional chaining (`?.`)
-- Always remind the user to restart the dev server after creating files
-- Sub-components should also be props-based for maximum portability
-- Apply design tokens when available for consistent branding
-- Screen designs render inside the shell when viewed in Design OS (if shell exists)
+- All components use Svelte 5 syntax (`$props()`)
+- CSS Grid only, no flexbox
+- Every element needs a unique `id`
+- Apply motion tokens for consistency
+- Components render in the 6-col preview panel

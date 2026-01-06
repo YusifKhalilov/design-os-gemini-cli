@@ -1,236 +1,198 @@
 # Agent Directives for Design OS
 
-Design OS is a **product planning and design tool** that helps users define their product vision, structure their data model, design their UI, and prepare export packages for implementation in a separate codebase.
+Design OS is a **Svelte 5 frontend design studio** that helps users create polished, animated, interactive UI components through a guided design workflow. The output is production-ready Svelte 5 code.
 
-> **Important**: Design OS is a planning tool, not the end product codebase. The screen designs and components generated here are meant to be exported and integrated into your actual product's codebase.
+> **Important**: Design OS focuses purely on frontend UI—no backend, no API integrations, no data fetching logic. The goal is a beautiful, functional interface.
 
 ---
 
 ## Understanding Design OS Context
 
-When working in Design OS, be aware of two distinct contexts:
+### 1. Design OS Application (React)
+The React app that powers the design studio interface:
+- Files in `src/` (components, pages, utilities)
+- Uses a 4+6 column kiosk layout (no vertical scroll)
+- Left panel (4 cols): Steps, indicators, component selector
+- Right panel (6 cols): Live preview of designed components
 
-### 1. Design OS Application
-The React application that displays and manages planning files. When modifying the Design OS UI itself:
-- Files live in `src/` (components, pages, utilities)
-- Uses the Design OS design system (stone palette, DM Sans, etc.)
-- Provides the interface for viewing specs, screen designs, exports, etc.
-
-### 2. Product Design (Screen Designs & Exports)
-The product you're planning and designing. When creating screen designs and exports:
-- Screen design components live in `src/sections/[section-name]/` and `src/shell/`
-- Product definition files live in `product/`
-- Exports are packaged to `product-plan/` for integration into a separate codebase
-- Follow the design requirements specified in each section's spec
+### 2. Designed Product (Svelte 5 Output)
+The UI you're creating for the user's product:
+- Svelte 5 components in `src/sections/[section-name]/`
+- Uses `$props()` rune for all component props
+- CSS transitions and Svelte transitions for animations
+- Design tokens from `product/design-system/`
 
 ---
 
 ## Questioning & Data Gathering
 
-When gathering information from the user, follow these strict guidelines:
+When gathering information, follow these guidelines:
 
-1. **Use Reasoning Techniques**: Before asking any question, use reasoning (Chain of Thought) to explain *why* you are asking it and how it relates to the goal.
-2. **Numbered Questions**: Every question must be clearly numbered (e.g., "1. What is...", "2. How should...").
-3. **Provide Options (A, B, C)**: Every question MUST include three distinct options labeled A, B, and C. These options should represent common or recommended choices to help the user decide quickly.
+1. **Use Reasoning**: Explain *why* you're asking before each question
+2. **Numbered Questions**: Clearly number all questions
+3. **Provide Options (A, B, C)**: Include three distinct options
 
-**Example Question Format:**
-> "Reasoning: Since we are defining the data model, I need to understand the primary scale of the application to determine the most appropriate database schema and relationship complexity.
+**Example:**
+> "Reasoning: Understanding the interaction style helps me choose appropriate animations.
 >
-> 1. What is the expected volume of data for this product?
-> A. Small (personal use, < 1,000 records)
-> B. Medium (department-level, < 100,000 records)
-> C. Large (enterprise-scale, millions of records)"
+> 1. What feel should interactions have?
+> A. Snappy & responsive (fast, minimal motion)
+> B. Smooth & elegant (medium easing, subtle motion)
+> C. Playful & dynamic (springs, bounces, rich motion)"
 
 ---
 
-## Getting Started — The Planning Flow
+## The Design Flow
 
-Design OS follows a structured planning sequence:
+Design OS follows a structured sequence:
 
-### 1. Product Overview (`/product-vision`)
-Define your product's core description, the problems it solves, and key features.
+### 1. Product Vision (`/product-vision`)
+Define what you're building and why.
 **Output:** `product/product-overview.md`
 
-### 2. Product Roadmap (`/product-roadmap`)
-Break your product into 3-5 development sections. Each section represents a self-contained area that can be designed and built independently.
-**Output:** `product/product-roadmap.md`
+### 2. Design Tokens (`/design-tokens`)
+Choose colors, typography, and motion curves.
+**Output:** `product/design-system/colors.json`, `typography.json`, `motion.json`
 
-### 3. Data Model (`/data-model`)
-Define the core entities and relationships in your product. This establishes the "nouns" of your system and ensures consistency across sections.
-**Output:** `product/data-model/data-model.md`
+### 3. Shell Design (`/design-shell`)
+Create the app shell with 4+6 kiosk layout.
+**Output:** `src/shell/AppShell.svelte`
 
-### 4. Design System (`/design-tokens`)
-Choose your color palette (from Tailwind) and typography (from Google Fonts). These tokens are applied to all screen designs.
-**Output:** `product/design-system/colors.json`, `product/design-system/typography.json`
-
-### 5. Application Shell (`/design-shell`)
-Design the persistent navigation and layout that wraps all sections.
-**Output:** `product/shell/spec.md`, `src/shell/components/`
-
-### 6. For Each Section:
-- `/shape-section` — Define the specification
-- `/sample-data` — Create sample data and types
-- `/design-screen` — Create screen designs
-- `/screenshot-design` — Capture screenshots
-
-### 7. Export (`/export-product`)
-Generate the complete export package with all components, types, and handoff documentation.
-**Output:** `product-plan/`
+### 4. For Each Section:
+- `/shape-section` — Define UI specification
+- `/design-screen` — Create Svelte 5 components
+- `/refine-ui` — Iterate on visual polish
+- `/animate-ui` — Add motion and transitions
 
 ---
 
 ## File Structure
 
 ```
-product/                           # Product definition (portable)
-├── product-overview.md            # Product description, problems/solutions, features
-├── product-roadmap.md             # List of sections with titles and descriptions
-│
-├── data-model/                    # Global data model
-│   └── data-model.md              # Entity descriptions and relationships
-│
-├── design-system/                 # Design tokens
+product/                           # Product definition
+├── product-overview.md            # Vision and goals
+├── design-system/
 │   ├── colors.json                # { primary, secondary, neutral }
-│   └── typography.json            # { heading, body, mono }
-│
-├── shell/                         # Application shell
-│   └── spec.md                    # Shell specification
-│
+│   ├── typography.json            # { heading, body, mono }
+│   └── motion.json                # { durations, easings }
 └── sections/
     └── [section-name]/
-        ├── spec.md                # Section specification
-        ├── data.json              # Sample data for screen designs
-        ├── types.ts               # TypeScript interfaces
-        └── *.png                  # Screenshots
+        └── spec.md                # UI specification
 
 src/
-├── shell/                         # Shell design components
-│   ├── components/
-│   │   ├── AppShell.tsx
-│   │   ├── MainNav.tsx
-│   │   ├── UserMenu.tsx
-│   │   └── index.ts
-│   └── ShellPreview.tsx
-│
+├── shell/                         # Shell Svelte components
+│   └── AppShell.svelte
 └── sections/
     └── [section-name]/
-        ├── components/            # Exportable components
-        │   ├── [Component].tsx
-        │   └── index.ts
-        └── [ViewName].tsx         # Preview wrapper
-
-product-plan/                      # Export package (generated)
-├── README.md                      # Quick start guide
-├── product-overview.md            # Product summary
-├── prompts/                       # Ready-to-use prompts for coding agents
-│   ├── one-shot-prompt.md         # Prompt for full implementation
-│   └── section-prompt.md          # Prompt template for incremental
-├── instructions/                  # Implementation instructions
-│   ├── one-shot-instructions.md   # All milestones combined
-│   └── incremental/               # Milestone-by-milestone instructions
-│       ├── 01-foundation.md
-│       ├── 02-shell.md
-│       └── [NN]-[section-id].md   # Section-specific instructions
-├── design-system/                 # Tokens, colors, fonts
-├── data-model/                    # Types and sample data
-├── shell/                         # Shell components
-└── sections/                      # Section components (with tests.md each)
+        ├── [Component].svelte     # Designed components
+        └── index.ts               # Exports
 ```
-
----
-
-## Design Requirements
-
-When creating screen designs, follow these guidelines:
-
-- **Mobile Responsive**: Use Tailwind's responsive prefixes (`sm:`, `md:`, `lg:`, `xl:`) to ensure layouts adapt properly across screen sizes.
-
-- **Light & Dark Mode**: Use `dark:` variants for all colors. Test that all UI elements are visible and readable in both modes.
-
-- **Use Design Tokens**: When design tokens are defined, apply the product's color palette and typography. Otherwise, fall back to `stone` for neutrals and `lime` for accents.
-
-- **Props-Based Components**: All screen design components must accept data and callbacks via props. Never import data directly in exportable components.
-
-- **No Navigation in Section Screen Designs**: Section screen designs should not include navigation chrome. The shell handles all navigation.
-
----
-
-## Tailwind CSS Directives
-
-These rules apply to both the Design OS application and all screen designs/components it generates:
-
-- **Tailwind CSS v4**: We always use Tailwind CSS v4 (not v3). Do not reference or create v3 patterns.
-
-- **No tailwind.config.js**: Tailwind CSS v4 does not use a `tailwind.config.js` file. Never reference, create, or modify one.
-
-- **Use Built-in Utility Classes**: Avoid writing custom CSS. Stick to using Tailwind's built-in utility classes for all styling.
-
-- **Use Built-in Colors**: Avoid defining custom colors. Use Tailwind's built-in color utility classes (e.g., `stone-500`, `lime-400`, `red-600`).
 
 ---
 
 ## The Four Pillars
 
-Design OS is organized around four main areas:
-
-1. **Product Overview** — The "what" and "why"
-   - Product name and description
-   - Problems and solutions
-   - Key features
-   - Sections/roadmap
-
-2. **Data Model** — The "nouns" of the system
-   - Core entity names and descriptions
-   - Relationships between entities
-   - Minimal — leaves room for implementation
-
-3. **Design System** — The "look and feel"
+1. **Design Tokens** — Visual foundation
    - Color palette (Tailwind colors)
    - Typography (Google Fonts)
+   - Motion (durations, easings, springs)
+   - Spacing (consistent gaps)
 
-4. **Application Shell** — The persistent chrome
-   - Global navigation structure
-   - User menu
-   - Layout pattern
+2. **UI Architecture** — 4+6 kiosk grid
+   - Left panel: Steps, fulfillment indicators
+   - Right panel: Live component preview
+   - No vertical page scroll
 
-Plus **Sections** — The individual features, each with spec, data, screen designs.
+3. **Component Library** — Svelte 5 components
+   - Props via `$props()` rune
+   - CSS transitions for interactions
+   - Dark mode support
+   - Responsive design
 
----
-
-## Design System Scope
-
-Design OS separates concerns between its own UI and the product being designed:
-
-- **Design OS UI**: Always uses the stone/lime palette and DM Sans typography
-- **Product Screen Designs**: Use the design tokens defined for the product (when available)
-- **Shell**: Uses product design tokens to preview the full app experience
-
----
-
-## Export & Handoff
-
-The `/export-product` command generates a complete handoff package:
-
-- **Ready-to-use prompts**: Pre-written prompts to copy/paste into coding agents
-  - `one-shot-prompt.md`: For full implementation in one session
-  - `section-prompt.md`: Template for section-by-section implementation
-- **Implementation instructions**: Detailed guides for each milestone
-  - `product-overview.md`: Always provide for context
-  - `one-shot-instructions.md`: All milestones combined
-  - Incremental instructions in `instructions/incremental/`
-- **Test instructions**: Each section includes `tests.md` with TDD specs
-- **Portable components**: Props-based, ready for any React setup
-
-The prompts guide the implementation agent to ask clarifying questions about authentication, user modeling, and tech stack before building. Test instructions are framework-agnostic and include user flows, empty states, and edge cases.
+4. **Live Preview** — Real-time visualization
+   - Component selector dropdown
+   - Device frame options (desktop/tablet/mobile)
+   - Dark/light mode toggle
 
 ---
 
-## Design System (Design OS Application)
+## Svelte 5 Component Requirements
 
-The Design OS application itself uses a "Refined Utility" aesthetic:
+When creating Svelte 5 components:
 
-- **Typography**: DM Sans for headings and body, IBM Plex Mono for code
-- **Colors**: Stone palette for neutrals (warm grays), lime for accents
-- **Layout**: Maximum 800px content width, generous whitespace
-- **Cards**: Minimal borders (1px), subtle shadows, generous padding
-- **Motion**: Subtle fade-ins (200ms), no bouncy animations
+### Props Pattern
+```svelte
+<script lang="ts">
+  interface Props {
+    items: Item[]
+    onSelect?: (id: string) => void
+  }
+
+  let { items, onSelect }: Props = $props()
+</script>
+```
+
+### Transitions
+```svelte
+<script>
+  import { fade, slide } from 'svelte/transition'
+</script>
+
+<div transition:fade={{ duration: 200 }}>
+  Content
+</div>
+```
+
+### CSS Transitions
+```svelte
+<button class="btn">Click me</button>
+
+<style>
+  .btn {
+    transition: all 0.2s ease-out;
+  }
+  .btn:hover {
+    transform: scale(1.02);
+  }
+</style>
+```
+
+### Required Attributes
+- All interactive elements must have unique `id` attributes
+- Use CSS Grid (no flexbox per user preference)
+- Support dark mode via CSS custom properties or classes
+
+---
+
+## Design Requirements
+
+- **No Vertical Scroll**: Body never scrolls; panels may scroll internally
+- **CSS Grid Only**: No flexbox layouts (user preference)
+- **Dark Mode**: Support both light and dark themes
+- **Micro-animations**: Hover, focus, and interaction feedback
+- **Unique IDs**: Every HTML element needs an id attribute
+
+---
+
+## Refinement Loops
+
+Design OS encourages iterative polish:
+
+1. **Design** → Create initial component
+2. **Preview** → View in right panel
+3. **Refine** → Adjust spacing, colors, typography
+4. **Animate** → Add motion and transitions
+5. **Repeat** → Until visually polished
+
+Use `/refine-ui` and `/animate-ui` workflows for iteration.
+
+---
+
+## Design OS Application Style
+
+The Design OS interface itself uses:
+- **Typography**: Bricolage Grotesque for headings, JetBrains Mono for code
+- **Colors**: Stone palette for neutrals, lime for accents
+- **Layout**: 4+6 column kiosk grid, no body scroll
+- **Cards**: Glassmorphic panels with subtle blur
+- **Motion**: Fast transitions (150-200ms), no bouncy animations

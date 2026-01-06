@@ -1,75 +1,69 @@
-import { Check, ArrowRight, AlertTriangle } from 'lucide-react'
-import type { ReactNode } from 'react'
+import { Lightbulb, Layout, Palette, Box, Layers, Sparkles, Zap } from 'lucide-react'
 
-export type StepStatus = 'completed' | 'current' | 'upcoming' | 'skipped'
+interface Step {
+  id: number
+  name: string
+  command: string
+}
 
 interface StepIndicatorProps {
-  step: number
-  status: StepStatus
-  children: ReactNode
-  isLast?: boolean
+  steps: Step[]
+  currentStep: number
+  getStatus: (id: number) => 'complete' | 'current' | 'pending'
+  onSelect: (id: number) => void
 }
 
-export function StepIndicator({ step, status, children, isLast = false }: StepIndicatorProps) {
+const stepIcons = [Lightbulb, Layout, Palette, Box, Layers, Sparkles, Zap]
+
+export function StepIndicator({ steps, currentStep, getStatus, onSelect }: StepIndicatorProps) {
   return (
-    <div className="relative">
-      {/* Vertical connecting line - extends from this step to the next */}
-      {!isLast && (
-        <div
-          className="absolute left-[10px] top-[28px] w-[2px] h-[calc(100%+16px)] bg-stone-200 dark:bg-stone-700"
-          aria-hidden="true"
-        />
-      )}
+    <div
+      id="step-indicator"
+      style={{
+        display: 'grid',
+        gridTemplateColumns: `repeat(${steps.length}, 1fr)`,
+        gap: '4px',
+        padding: '16px',
+        borderBottom: '1px solid #2a2a2a',
+        background: '#181818',
+      }}
+    >
+      {steps.map((step, index) => {
+        const Icon = stepIcons[index]
+        const status = getStatus(step.id)
+        const isActive = step.id === currentStep
 
-      {/* Step badge positioned at top-left */}
-      <div className="absolute -left-[2px] top-0 z-10">
-        <StepBadge step={step} status={status} />
-      </div>
-
-      {/* Card content with left padding to accommodate the step indicator */}
-      <div className="pl-10">
-        {children}
-      </div>
-    </div>
-  )
-}
-
-interface StepBadgeProps {
-  step: number
-  status: StepStatus
-}
-
-function StepBadge({ step, status }: StepBadgeProps) {
-  const baseClasses = "w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold transition-all duration-200"
-
-  if (status === 'completed') {
-    return (
-      <div className={`${baseClasses} bg-stone-200 dark:bg-stone-700 text-stone-500 dark:text-stone-400`}>
-        <Check className="w-3 h-3" strokeWidth={2.5} />
-      </div>
-    )
-  }
-
-  if (status === 'current') {
-    return (
-      <div className={`${baseClasses} bg-stone-900 dark:bg-stone-100 text-stone-100 dark:text-stone-900 shadow-sm`}>
-        <ArrowRight className="w-3 h-3" strokeWidth={2.5} />
-      </div>
-    )
-  }
-
-  if (status === 'skipped') {
-    return (
-      <div className={`${baseClasses} bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400`}>
-        <AlertTriangle className="w-3 h-3" strokeWidth={2.5} />
-      </div>
-    )
-  }
-
-  // upcoming
-  return (
-    <div className={`${baseClasses} bg-stone-200 dark:bg-stone-700 text-stone-500 dark:text-stone-400`}>
-      {step}
+        return (
+          <button
+            key={step.id}
+            id={`step-btn-${step.id}`}
+            onClick={() => onSelect(step.id)}
+            title={step.name}
+            style={{
+              display: 'grid',
+              placeItems: 'center',
+              padding: '10px',
+              borderRadius: '10px',
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'all 0.15s ease-out',
+              background: isActive
+                ? 'linear-gradient(135deg, #dc2626, #991b1b)'
+                : status === 'complete'
+                ? 'rgba(34, 197, 94, 0.15)'
+                : 'transparent',
+              color: isActive
+                ? 'white'
+                : status === 'complete'
+                ? '#22c55e'
+                : '#666',
+              boxShadow: isActive ? '0 4px 12px rgba(220, 38, 38, 0.3)' : 'none',
+            }}
+          >
+            <Icon size={18} />
+          </button>
+        )
+      })}
     </div>
   )
 }

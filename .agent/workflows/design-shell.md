@@ -1,231 +1,198 @@
 ---
-description: Design the application shell with navigation and layout
+description: Design the application shell with 4+6 kiosk layout
 ---
 # Design Shell
 
-You are helping the user design the application shell — the persistent navigation and layout that wraps all sections. This is a screen design, not implementation code.
+You are helping the user design the application shell — a full-viewport 4+6 column kiosk layout for their Svelte 5 app. No vertical page scroll.
 
 ## Step 1: Check Prerequisites
 
-First, verify prerequisites exist:
-
-1. Read `/product/product-overview.md` — Product name and description
+1. Read `/product/product-overview.md` — Product name
 2. Read `/product/product-roadmap.md` — Sections for navigation
-3. Check if `/product/design-system/colors.json` and `/product/design-system/typography.json` exist
+3. Check for `/product/design-system/` tokens
 
-If overview or roadmap are missing:
+If overview or roadmap missing:
+"Before designing the shell, run:
+1. `/product-vision`
+2. `/product-roadmap`"
 
-"Before designing the shell, you need to define your product and sections. Please run:
-1. `/product-vision` — Define your product
-2. `/product-roadmap` — Define your sections"
+If tokens missing, warn but continue:
+"Note: Run `/design-tokens` first for consistent styling."
 
-Stop here if overview or roadmap are missing.
+## Step 2: Explain the Kiosk Layout
 
-If design tokens are missing, show a warning but continue:
+"I'm designing a **4+6 kiosk shell** for **[Product Name]**:
 
-"Note: Design tokens haven't been defined yet. I'll proceed with default styling, but you may want to run `/design-tokens` first for consistent colors and typography."
+```
+┌────────────────────────────────────────────────┐
+│  Header (compact)                              │
+├──────────────┬─────────────────────────────────┤
+│  Left Panel  │  Right Panel                    │
+│  (4 cols)    │  (6 cols)                       │
+│              │                                 │
+│  • Steps     │  • Live Preview                 │
+│  • Progress  │  • Component Display            │
+│  • Selector  │  • Device Frames                │
+│              │                                 │
+└──────────────┴─────────────────────────────────┘
+```
 
-## Step 2: Analyze Product Structure
+**Key features:**
+- No vertical page scroll (panels scroll internally)
+- Left: Steps, indicators, component selector
+- Right: Live preview of designed components
 
-Review the roadmap sections and present navigation options following the **Questioning & Data Gathering** guidelines in `agents.md`: Use reasoning, number your questions, and provide A/B/C options for each.
+Reasoning: This layout keeps context visible while maximizing preview space.
 
-"I'm designing the shell for **[Product Name]**. Based on your roadmap, you have [N] sections. Let's decide on the shell layout.
+1. What should the header contain?
+A. Logo + section title only (minimal)
+B. Logo + breadcrumbs + theme toggle (standard)
+C. Full navigation bar (complex)"
 
-Reasoning: The application shell defines the user's primary navigation mental model. A sidebar is better for deep tools, while top nav is better for content-focused apps.
+## Step 3: Gather Details
 
-1. Which layout pattern fits **[Product Name]** best?
-A. Sidebar Navigation (Best for dashboards/complex tools)
-B. Top Navigation (Best for simpler/marketing-style apps)
-C. Minimal Header (Best for single-purpose/wizard-style tools)
+"1. How should sections appear in the left panel?
+A. Collapsible accordion (one open at a time)
+B. Vertical tabs (all visible, scrollable)
+C. Dropdown selector (compact)
 
-## Step 3: Gather Design Details
-
-Iterate on the design details. Example reasoning and questions:
-
-> "Reasoning: Small details like menu placement and responsive behavior greatly impact the ease of use on different devices.
->
-> 1. Where should the user menu (avatar, logout) appear?
-> A. Top right (Classic web pattern)
-> B. Bottom of sidebar (Dashboard pattern)
-> C. Inside a dedicated 'Account' nav item"
+2. What device frames for the preview panel?
+A. Desktop only (full width preview)
+B. Desktop + Tablet + Mobile frames
+C. Responsive slider (any width)"
 
 ## Step 4: Present Shell Specification
 
-Once you understand their preferences:
+"Here's your shell design:
 
-"Here's the shell design for **[Product Name]**:
+**Layout:** 4+6 kiosk grid (no page scroll)
 
-**Layout Pattern:** [Sidebar/Top Nav/Minimal]
+**Header:**
+- [Contents based on choice]
+- Height: ~48px fixed
 
-**Navigation Structure:**
-- [Nav Item 1] → [Section]
-- [Nav Item 2] → [Section]
-- [Nav Item 3] → [Section]
-- [Additional items like Settings, Help]
+**Left Panel (4 cols):**
+- Section/step list with [pattern]
+- Progress indicators
+- Component selector dropdown
 
-**User Menu:**
-- Location: [Top right / Bottom of sidebar]
-- Contents: Avatar, user name, logout
+**Right Panel (6 cols):**
+- Live preview area
+- Device frame: [choice]
+- Dark/light toggle for preview
 
-**Responsive Behavior:**
-- Desktop: [How it looks]
-- Mobile: [How it adapts]
+**CSS Grid:**
+```css
+.shell {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: 48px 1fr;
+  height: 100vh;
+}
+```
 
-Does this match what you had in mind?"
+Does this look good?"
 
-Iterate until approved.
-
-## Step 5: Create the Shell Specification
+## Step 5: Create Shell Specification
 
 Create `/product/shell/spec.md`:
 
 ```markdown
 # Application Shell Specification
 
-## Overview
-[Description of the shell design and its purpose]
-
-## Navigation Structure
-- [Nav Item 1] → [Section 1]
-- [Nav Item 2] → [Section 2]
-- [Nav Item 3] → [Section 3]
-- [Any additional nav items]
-
-## User Menu
-[Description of user menu location and contents]
-
 ## Layout Pattern
-[Description of the layout — sidebar, top nav, etc.]
+4+6 kiosk grid, no vertical page scroll
 
-## Responsive Behavior
-- **Desktop:** [Behavior]
-- **Tablet:** [Behavior]
-- **Mobile:** [Behavior]
+## Grid Structure
+- Header: full width, 48px height
+- Left panel: columns 1-4
+- Right panel: columns 5-10
 
-## Design Notes
-[Any additional design decisions or notes]
+## Left Panel Features
+- [Section/step display pattern]
+- Progress/fulfillment indicators
+- Component selector dropdown
+
+## Right Panel Features
+- Live component preview
+- Device frame selector
+- Theme toggle for preview
 ```
 
-## Step 6: Create Shell Components
+## Step 6: Create Shell Component
 
-Create the shell components at `src/shell/components/`:
+Create `src/shell/AppShell.svelte`:
 
-### AppShell.tsx
-The main wrapper component that accepts children and provides the layout structure.
-
-```tsx
-interface AppShellProps {
-  children: React.ReactNode
-  navigationItems: Array<{ label: string; href: string; isActive?: boolean }>
-  user?: { name: string; avatarUrl?: string }
-  onNavigate?: (href: string) => void
-  onLogout?: () => void
-}
-```
-
-### MainNav.tsx
-The navigation component (sidebar or top nav based on the chosen pattern).
-
-### UserMenu.tsx
-The user menu with avatar and dropdown.
-
-### index.ts
-Export all components.
-
-**Component Requirements:**
-- Use props for all data and callbacks (portable)
-- Apply design tokens if they exist (colors, fonts)
-- Support light and dark mode with `dark:` variants
-- Be mobile responsive
-- Use Tailwind CSS for styling
-- Use lucide-react for icons
-
-## Step 7: Create Shell Preview
-
-Create `src/shell/ShellPreview.tsx` — a preview wrapper for viewing the shell in Design OS:
-
-```tsx
-import data from '@/../product/sections/[first-section]/data.json' // if exists
-import { AppShell } from './components/AppShell'
-
-export default function ShellPreview() {
-  const navigationItems = [
-    { label: '[Section 1]', href: '/section-1', isActive: true },
-    { label: '[Section 2]', href: '/section-2' },
-    { label: '[Section 3]', href: '/section-3' },
-  ]
-
-  const user = {
-    name: 'Alex Morgan',
-    avatarUrl: undefined,
+```svelte
+<script lang="ts">
+  interface Props {
+    sections: Array<{ id: string; title: string; complete: boolean }>
+    selectedComponent?: string
+    children?: import('svelte').Snippet
   }
 
-  return (
-    <AppShell
-      navigationItems={navigationItems}
-      user={user}
-      onNavigate={(href) => console.log('Navigate to:', href)}
-      onLogout={() => console.log('Logout')}
-    >
-      <div className="p-8">
-        <h1 className="text-2xl font-bold mb-4">Content Area</h1>
-        <p className="text-stone-600 dark:text-stone-400">
-          Section content will render here.
-        </p>
-      </div>
-    </AppShell>
-  )
-}
+  let { sections, selectedComponent, children }: Props = $props()
+</script>
+
+<div id="shell-root" class="shell-grid">
+  <header id="shell-header">
+    <!-- Header content -->
+  </header>
+
+  <aside id="left-panel" class="left-panel">
+    <!-- Steps, selector -->
+  </aside>
+
+  <main id="right-panel" class="right-panel">
+    {@render children?.()}
+  </main>
+</div>
+
+<style>
+  .shell-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: 48px 1fr;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  #shell-header {
+    grid-column: 1 / 11;
+  }
+
+  .left-panel {
+    grid-column: 1 / 5;
+    overflow-y: auto;
+  }
+
+  .right-panel {
+    grid-column: 5 / 11;
+    overflow: hidden;
+  }
+</style>
 ```
 
-## Step 8: Apply Design Tokens
+## Step 7: Confirm Completion
 
-If design tokens exist, apply them to the shell components:
+"I've designed the shell for **[Product Name]**:
 
-**Colors:**
-- Read `/product/design-system/colors.json`
-- Use primary color for active nav items, key accents
-- Use secondary color for hover states, subtle highlights
-- Use neutral color for backgrounds, borders, text
+**Created:**
+- `/product/shell/spec.md`
+- `src/shell/AppShell.svelte`
 
-**Typography:**
-- Read `/product/design-system/typography.json`
-- Apply heading font to nav items and titles
-- Apply body font to other text
-- Include Google Fonts import in the preview
+**Features:**
+- 4+6 kiosk layout (no page scroll)
+- [Header style]
+- [Left panel pattern]
+- [Preview options]
 
-## Step 9: Confirm Completion
-
-Let the user know:
-
-"I've designed the application shell for **[Product Name]**:
-
-**Created files:**
-- `/product/shell/spec.md` — Shell specification
-- `src/shell/components/AppShell.tsx` — Main shell wrapper
-- `src/shell/components/MainNav.tsx` — Navigation component
-- `src/shell/components/UserMenu.tsx` — User menu component
-- `src/shell/components/index.ts` — Component exports
-- `src/shell/ShellPreview.tsx` — Preview wrapper
-
-**Shell features:**
-- [Layout pattern] layout
-- Navigation for all [N] sections
-- User menu with avatar and logout
-- Mobile responsive design
-- Light/dark mode support
-
-**Important:** Restart your dev server to see the changes.
-
-When you design section screens with `/design-screen`, they will render inside this shell, showing the full app experience.
-
-Next: Run `/shape-section` to start designing your first section."
+Next: Run `/design-screen` to create Svelte 5 components."
 
 ## Important Notes
 
-- The shell is a screen design — it demonstrates the navigation and layout design
-- Components are props-based and portable to the user's codebase
-- The preview wrapper is for Design OS only — not exported
-- Apply design tokens when available for consistent styling
-- Keep the shell focused on navigation chrome — no authentication UI
-- Section screen designs will render inside the shell's content area
+- Shell uses CSS Grid only (no flexbox)
+- All elements need unique `id` attributes
+- Output is Svelte 5 with `$props()` rune
+- Body never scrolls; panels may scroll internally
+- Preview panel shows designed components in real-time
