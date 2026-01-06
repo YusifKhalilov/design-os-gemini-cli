@@ -1,9 +1,7 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { AppLayout } from '@/components/AppLayout'
 import { EmptyState } from '@/components/EmptyState'
-import { StepIndicator, type StepStatus } from '@/components/StepIndicator'
 import { NextPhaseButton } from '@/components/NextPhaseButton'
 import { loadProductData } from '@/lib/product-loader'
 import { ChevronRight, Layout } from 'lucide-react'
@@ -34,34 +32,6 @@ const colorMap: Record<string, { light: string; base: string; dark: string }> = 
   stone: { light: '#d6d3d1', base: '#78716c', dark: '#57534e' },
 }
 
-/**
- * Determine the status of each step on the Design page
- * Steps: 1. Design Tokens, 2. Shell Design
- */
-function getDesignPageStepStatuses(
-  hasDesignSystem: boolean,
-  hasShell: boolean
-): StepStatus[] {
-  const statuses: StepStatus[] = []
-
-  // Step 1: Design Tokens
-  if (hasDesignSystem) {
-    statuses.push('completed')
-  } else {
-    statuses.push('current')
-  }
-
-  // Step 2: Shell
-  if (hasShell) {
-    statuses.push('completed')
-  } else if (hasDesignSystem) {
-    statuses.push('current')
-  } else {
-    statuses.push('upcoming')
-  }
-
-  return statuses
-}
 
 export function DesignPage() {
   const productData = useMemo(() => loadProductData(), [])
@@ -247,19 +217,22 @@ function ColorSwatch({ label, colorName }: ColorSwatchProps) {
 
   return (
     <div>
-      <div className="flex gap-0.5 mb-2">
+      <div id={`swatch-${label.toLowerCase()}`} style={{ display: 'grid', gridTemplateColumns: '1fr 2fr 1fr', gap: '2px' }} className="mb-2">
         <div
-          className="flex-1 h-14 rounded-l-md"
+          id={`${label.toLowerCase()}-light`}
+          className="h-14 rounded-l-md"
           style={{ backgroundColor: colors.light }}
           title={`${colorName}-300`}
         />
         <div
-          className="flex-[2] h-14"
+          id={`${label.toLowerCase()}-base`}
+          className="h-14"
           style={{ backgroundColor: colors.base }}
           title={`${colorName}-500`}
         />
         <div
-          className="flex-1 h-14 rounded-r-md"
+          id={`${label.toLowerCase()}-dark`}
+          className="h-14 rounded-r-md"
           style={{ backgroundColor: colors.dark }}
           title={`${colorName}-600`}
         />
