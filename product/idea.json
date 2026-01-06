@@ -1,0 +1,11 @@
+{
+  "name": "AuDHD Kanban & Timer",
+  "description": "A focus-friendly task manager utilizing floating panels and docks for a flexible workspace.",
+  "targetUsers": "Yourself (AuDHD focus).",
+  "features": [
+    "Kanban Board: Drag-and-drop tasks organized in floating panels.",
+    "Tomato Timer: Integrated timer with controlled work/break intervals.",
+    "Floating Docks UI: Navigation and tools accessible via floating docks and panels to minimize visual clutter.",
+    "Quick Add: Rapid task entry to capture thoughts instantly."
+  ]
+}

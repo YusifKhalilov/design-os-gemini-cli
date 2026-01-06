@@ -1,6 +1,6 @@
 import { Download, Monitor, Tablet, Smartphone, RotateCcw } from 'lucide-react'
 import { useState } from 'react'
-import type { StepData } from './Studio'
+import type { StepData } from './studioTypes'
 
 interface LivePreviewProps {
   stepData: StepData

@@ -1,10 +1,5 @@
+import type { Step } from './studioTypes'
 import { Lightbulb, Layout, Palette, Box, Layers, Sparkles, Zap } from 'lucide-react'
-
-interface Step {
-  id: number
-  name: string
-  command: string
-}
 
 interface StepIndicatorProps {
   steps: Step[]

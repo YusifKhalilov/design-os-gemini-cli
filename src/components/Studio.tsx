@@ -1,48 +1,58 @@
 import { useState, useEffect } from 'react'
 import { StepIndicator } from './StepIndicator'
-import { StepContent } from './StepContent'
-import { LivePreview } from './LivePreview'
+import { StepContent } from './StepContent.tsx'
+import { LivePreview } from './LivePreview.tsx'
 
-export interface StepData {
-  idea?: {
-    name: string
-    description: string
-    targetUsers: string
-    features: string[]
+import { STEPS, type StepData } from './studioTypes'
+
+const simpleHash = (str: string) => {
+  let hash = 0
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i)
+    hash = (hash << 5) - hash + char
+    hash = hash & hash
   }
-  layout?: {
-    type: 'sidebar' | 'topnav' | 'dashboard' | 'minimal'
-    description: string
-  }
-  tokens?: {
-    colors: { primary: string; secondary: string; neutral: string }
-    fonts: { heading: string; body: string }
-    motion: { duration: string; easing: string }
-  }
-  shell?: { complete: boolean }
-  components?: { files: string[] }
-  polish?: { complete: boolean }
-  animate?: { complete: boolean }
+  return hash.toString()
 }
-
-const STEPS = [
-  { id: 1, name: 'Idea', command: '/idea' },
-  { id: 2, name: 'Layout', command: '/layout' },
-  { id: 3, name: 'Tokens', command: '/tokens' },
-  { id: 4, name: 'Shell', command: '/shell' },
-  { id: 5, name: 'Components', command: '/components' },
-  { id: 6, name: 'Polish', command: '/polish' },
-  { id: 7, name: 'Animate', command: '/animate' },
-]
 
 export function Studio() {
   const [currentStep, setCurrentStep] = useState(1)
   const [stepData, setStepData] = useState<StepData>({})
 
-  // Load step data from product folder (simulated for now)
+  // Load step data from product folder
   useEffect(() => {
-    // In real implementation, this would read from product/*.json files
-    // For now, we'll start empty
+    const loadData = async () => {
+      try {
+        const modules = import.meta.glob('../../product/*.json')
+        const newData: StepData = {}
+
+        const ignoredHashes = new Set(JSON.parse(localStorage.getItem('design_os_ignored_hashes') || '[]'))
+
+        for (const path in modules) {
+          const mod = await modules[path]() as { default: any }
+          const content = mod.default
+          const hash = simpleHash(JSON.stringify(content))
+
+          if (ignoredHashes.has(hash)) continue
+
+          const fileName = path.split('/').pop()?.replace('.json', '')
+
+          if (fileName === 'idea') {
+            newData.idea = content
+          } else if (fileName === 'layout') {
+            newData.layout = content
+          } else if (fileName === 'tokens') {
+            newData.tokens = content
+          }
+        }
+
+        setStepData(prev => ({ ...prev, ...newData }))
+      } catch (error) {
+        console.error('Error loading product data:', error)
+      }
+    }
+
+    loadData()
   }, [])
 
   const getStepStatus = (stepId: number): 'complete' | 'current' | 'pending' => {
@@ -50,6 +60,17 @@ export function Studio() {
     if (stepData[stepKey]) return 'complete'
     if (stepId === currentStep) return 'current'
     return 'pending'
+  }
+
+  const handleReset = () => {
+    const ignored = new Set(JSON.parse(localStorage.getItem('design_os_ignored_hashes') || '[]'))
+
+    Object.values(stepData).forEach(data => {
+      if (data) ignored.add(simpleHash(JSON.stringify(data)))
+    })
+
+    localStorage.setItem('design_os_ignored_hashes', JSON.stringify([...ignored]))
+    setStepData({})
   }
 
   return (
@@ -102,7 +123,7 @@ export function Studio() {
           background: '#0a0a0a',
         }}
       >
-        <LivePreview stepData={stepData} onReset={() => setStepData({})} />
+        <LivePreview stepData={stepData} onReset={handleReset} />
       </main>
     </div>
   )

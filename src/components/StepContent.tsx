@@ -1,10 +1,4 @@
-import type { StepData } from './Studio'
-
-interface Step {
-  id: number
-  name: string
-  command: string
-}
+import type { Step, StepData } from './studioTypes'
 
 interface StepContentProps {
   step: Step
@@ -12,7 +6,7 @@ interface StepContentProps {
   status: 'complete' | 'current' | 'pending'
 }
 
-export function StepContent({ step, data, status }: StepContentProps) {
+export function StepContent({ step, data }: StepContentProps) {
   const stepKey = step.name.toLowerCase() as keyof StepData
   const stepData = data[stepKey]
 
@@ -40,7 +34,7 @@ export function StepContent({ step, data, status }: StepContentProps) {
       {/* Step content - either prompt or data */}
       <div id="step-data-section">
         {!stepData ? (
-          <NotStartedView command={step.command} stepName={step.name} />
+          <NotStartedView command={step.command} />
         ) : (
           <CompletedView stepKey={stepKey} data={data} />
         )}
@@ -49,7 +43,7 @@ export function StepContent({ step, data, status }: StepContentProps) {
   )
 }
 
-function NotStartedView({ command, stepName }: { command: string; stepName: string }) {
+function NotStartedView({ command }: { command: string }) {
   return (
     <div
       id="not-started-view"
