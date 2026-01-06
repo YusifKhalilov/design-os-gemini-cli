@@ -19,6 +19,7 @@ export function StepContent({ step, data }: StepContentProps) {
         gap: '16px',
         padding: '20px',
         overflow: 'auto',
+        height: '100%',
       }}
     >
       {/* Step title */}

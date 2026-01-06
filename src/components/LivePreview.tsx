@@ -36,9 +36,9 @@ export function LivePreview({ stepData, onReset }: LivePreviewProps) {
         id="preview-canvas"
         style={{
           display: 'grid',
-          placeItems: 'center',
+          placeItems: 'center', // Centers the device/frame
           padding: '32px',
-          overflow: 'auto',
+          overflow: 'hidden', // Prevent scroll on the gray canvas
           background: 'radial-gradient(circle at 50% 30%, rgba(220, 38, 38, 0.03) 0%, transparent 50%)',
         }}
       >
@@ -46,14 +46,15 @@ export function LivePreview({ stepData, onReset }: LivePreviewProps) {
           id="preview-frame"
           style={{
             width: deviceWidths[device],
-            maxWidth: device === 'desktop' ? '1000px' : undefined,
-            minHeight: '500px',
+            maxWidth: '100%', // Ensure it never overflows horizontally
+            height: '100%', // Fill the vertical space
             background: hasTokens ? stepData.tokens?.colors.neutral : '#1a1a1a',
             borderRadius: '12px',
             border: '1px solid #333',
             boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
-            overflow: 'hidden',
+            overflow: 'hidden', // Internal content scrolls
             transition: 'width 0.3s ease',
+            display: 'grid', // Ensure children fill it
           }}
         >
           {!hasIdea ? (
@@ -166,7 +167,6 @@ function EmptyPreview() {
         display: 'grid',
         placeItems: 'center',
         height: '100%',
-        minHeight: '400px',
         padding: '32px',
       }}
     >
@@ -186,9 +186,11 @@ function AppPreview({ stepData }: { stepData: StepData }) {
   return (
     <div
       style={{
+        display: 'grid',
+        gridTemplateRows: 'auto 1fr', // Header auto, content fills rest
         height: '100%',
-        minHeight: '400px',
         fontFamily: fonts?.body || 'inherit',
+        overflow: 'hidden',
       }}
     >
       {/* Header */}
@@ -209,7 +211,7 @@ function AppPreview({ stepData }: { stepData: StepData }) {
         style={{
           display: 'grid',
           gridTemplateColumns: layout === 'sidebar' ? '200px 1fr' : '1fr',
-          height: 'calc(100% - 57px)',
+          overflow: 'hidden', // Container structure
         }}
       >
         {layout === 'sidebar' && (
@@ -218,6 +220,7 @@ function AppPreview({ stepData }: { stepData: StepData }) {
               padding: '16px',
               borderRight: '1px solid #333',
               background: '#161616',
+              overflowY: 'auto', // Scrollable sidebar
             }}
           >
             <p style={{ fontSize: '11px', color: '#666', marginBottom: '12px' }}>Navigation</p>
@@ -238,13 +241,15 @@ function AppPreview({ stepData }: { stepData: StepData }) {
             ))}
           </div>
         )}
-        <div style={{ padding: '24px' }}>
+        <div style={{ padding: '24px', overflowY: 'auto' /* Scrollable main content */ }}>
           <h2 style={{ fontSize: '20px', marginBottom: '8px', fontFamily: fonts?.heading || 'inherit' }}>
             {stepData.idea?.features[0] || 'Main Feature'}
           </h2>
           <p style={{ fontSize: '14px', color: '#888', lineHeight: 1.6 }}>
             {stepData.idea?.description || 'App description will appear here'}
           </p>
+          {/* Filler content to test scroll if needed */}
+          <div style={{ height: '20px' }}></div>
         </div>
       </div>
     </div>

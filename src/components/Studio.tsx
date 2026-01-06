@@ -78,49 +78,71 @@ export function Studio() {
       id="studio-root"
       style={{
         display: 'grid',
-        gridTemplateColumns: '360px 1fr',
+        gridTemplateColumns: '420px 1fr',
+        gap: '24px',
         height: '100vh',
         width: '100vw',
+        padding: '24px',
         overflow: 'hidden',
-        background: '#0f0f0f',
+        background: 'radial-gradient(circle at 50% 50%, #1a1a1a 0%, #050505 100%)',
         color: '#f5f5f5',
       }}
     >
-      {/* LEFT PANEL */}
+      {/* LEFT PANEL - Floating Card */}
       <aside
-        id="left-panel"
+        id="left-floating-card"
+        className="glass-panel"
         style={{
           display: 'grid',
-          gridTemplateRows: 'auto 1fr',
-          borderRight: '1px solid #2a2a2a',
+          gridTemplateRows: '1fr auto',
           overflow: 'hidden',
-          background: '#141414',
+          borderRadius: '24px',
+          border: '1px solid rgba(255, 255, 255, 0.05)',
         }}
       >
-        {/* Step indicators - horizontal row */}
-        <StepIndicator
-          steps={STEPS}
-          currentStep={currentStep}
-          getStatus={getStepStatus}
-          onSelect={setCurrentStep}
-        />
+        {/* Step content - Area flows with content */}
+        <div
+          id="step-content-container"
+          style={{
+            display: 'grid',
+            overflow: 'hidden'
+          }}
+        >
+          <StepContent
+            step={STEPS[currentStep - 1]}
+            data={stepData}
+            status={getStepStatus(currentStep)}
+          />
+        </div>
 
-        {/* Step content - info below */}
-        <StepContent
-          step={STEPS[currentStep - 1]}
-          data={stepData}
-          status={getStepStatus(currentStep)}
-        />
+        {/* Step indicators - Floating Dock at the bottom */}
+        <div
+          id="dock-container"
+          style={{
+            display: 'grid',
+            padding: '0 16px 16px 16px'
+          }}
+        >
+          <StepIndicator
+            steps={STEPS}
+            currentStep={currentStep}
+            getStatus={getStepStatus}
+            onSelect={setCurrentStep}
+          />
+        </div>
       </aside>
 
-      {/* RIGHT PANEL - Always live preview */}
+      {/* RIGHT PANEL - Floating Preview */}
       <main
-        id="right-panel"
+        id="right-floating-card"
+        className="glass-panel"
         style={{
           display: 'grid',
           gridTemplateRows: '1fr',
           overflow: 'hidden',
-          background: '#0a0a0a',
+          borderRadius: '24px',
+          border: '1px solid rgba(255, 255, 255, 0.05)',
+          background: 'rgba(0, 0, 0, 0.4)',
         }}
       >
         <LivePreview stepData={stepData} onReset={handleReset} />
