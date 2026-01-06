@@ -12,25 +12,28 @@ Wait for their response before proceeding.
 
 ## Step 2: Ask Clarifying Questions
 
-After receiving their input, use the AskUserQuestion tool to ask 3-5 targeted questions to help shape:
+After receiving their input, follow the **Questioning & Data Gathering** guidelines in `agents.md`: Use reasoning, number your questions, and provide A/B/C options for each.
 
-- **The product name** - A clear, concise name for the product
-- **The core product description** (1-3 sentences that capture the essence)
-- **The key problems** the product solves (1-5 specific pain points)
-- **How the product solves each problem** (concrete solutions)
-- **The main features** that make this possible
+Ask 3-5 targeted questions to help shape:
+- **The product name** (if missing, ask "Reasoning: Every product needs a unique identity and a label for documentation. 1. What would you like to call this product? A. [Suggestion 1] B. [Suggestion 2] C. Other (please specify)")
+- **The core product description**
+- **The key problems** & **solutions**
+- **The main features**
 
-**Important:** If the user hasn't already provided a product name, ask them:
-- "What would you like to call this product? (A short, memorable name)"
+**Example Reasoning & Questions:**
+> "Reasoning: To build a solid foundation, I need to understand who we are building for and what the core value proposition is.
+>
+> 1. Who is the primary user of this product?
+> A. Casual users/Consumers
+> B. Professionals/B2B
+> C. Internal team members
+>
+> 2. What's the single biggest pain point you're addressing?
+> A. Manual, repetitive tasks (Efficiency)
+> B. Lack of centralized data (Organization)
+> C. High cost of existing solutions (Affordability)"
 
-Other example clarifying questions (adapt based on their input):
-- "Who is the primary user of this product? Can you describe them?"
-- "What's the single biggest pain point you're addressing?"
-- "How do people currently solve this problem without your product?"
-- "What makes your approach different or better?"
-- "What are the 3-5 most essential features?"
-
-Ask questions one or two at a time, and engage conversationally.
+Ask questions one or two at a time.
 
 ## Step 3: Present Draft and Refine
 

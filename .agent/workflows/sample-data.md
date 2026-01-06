@@ -11,7 +11,16 @@ First, identify the target section and verify that `spec.md` exists for it.
 
 Read `/product/product-roadmap.md` to get the list of available sections.
 
-If there's only one section, auto-select it. If there are multiple sections, use the AskUserQuestion tool to ask which section the user wants to generate data for.
+If there's only one section, auto-select it. If there are multiple sections, follow the **Questioning & Data Gathering** guidelines:
+
+"Which section would you like to generate sample data for?
+
+Reasoning: We should generate data one section at a time to ensure the sample records are realistic and aligned with that section's specific requirements.
+
+1. Please select a section:
+A. [Section 1 Title]
+B. [Section 2 Title]
+C. [Section 3 Title]"
 
 Then check if `product/sections/[section-id]/spec.md` exists. If it doesn't:
 
@@ -46,57 +55,16 @@ Read and analyze `product/sections/[section-id]/spec.md` to understand:
 
 ## Step 4: Present Data Structure
 
-Present your proposed data structure to the user in human-friendly language. Non-technical users should understand how their data is being organized.
+Present your proposed data structure to the user following the **Questioning & Data Gathering** guidelines.
 
-**If using global data model:**
+"Based on the specification for **[Section Title]**, here's how I'm proposing to organize your data.
 
-"Based on the specification for **[Section Title]** and your global data model, here's how I'm organizing the data:
+Reasoning: A well-structured data model is the backbone of a functional UI. Organizing this properly now will make building the screen designs much easier.
 
-**Entities (from your data model):**
-
-- **[Entity1]** — [Description from data model]
-- **[Entity2]** — [Description from data model]
-
-**Section-specific data:**
-
-[Any additional data specific to this section's UI needs]
-
-**What You Can Do:**
-
-- View, edit, and delete [entities]
-- [Other key actions from the spec]
-
-**Sample Data:**
-
-I'll create [X] realistic [Entity1] records with varied content to make your screen designs feel real.
-
-Does this structure make sense? Any adjustments?"
-
-**If no global data model:**
-
-"Based on the specification for **[Section Title]**, here's how I'm proposing to organize your data:
-
-**Data Models:**
-
-- **[Entity1]** — [One sentence explaining what this represents]
-- **[Entity2]** — [One sentence explanation]
-
-**How They Connect:**
-
-[Explain relationships in simple terms]
-
-**What You Can Do:**
-
-- View, edit, and delete [entities]
-- [Other key actions from the spec]
-
-**Sample Data:**
-
-I'll create [X] realistic [Entity1] records with varied content to make your screen designs feel real.
-
-Does this structure make sense for your product? Any adjustments?"
-
-Use the AskUserQuestion tool if there are ambiguities about what data is needed.
+1. Does this structure make sense for your product?
+A. Yes, looks solid
+B. I want to add/remove some data fields
+C. I want more variety in the sample records"
 
 ## Step 5: Generate the Data File
 

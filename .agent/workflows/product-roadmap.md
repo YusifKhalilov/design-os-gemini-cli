@@ -30,7 +30,7 @@ Based on your analysis, propose 3-5 sections that represent:
 - **Roadmap phases** - logical order for building
 - **Self-contained feature areas** - each can be designed and built independently
 
-Present your proposal:
+Present your proposal and ask for feedback following the **Questioning & Data Gathering** guidelines in `agents.md`: Use reasoning, number your questions, and provide A/B/C options for each.
 
 "Based on your product overview, I'd suggest breaking this into these sections:
 
@@ -38,16 +38,23 @@ Present your proposal:
 2. **[Section Title]** - [One sentence description]
 3. **[Section Title]** - [One sentence description]
 
-These are ordered by importance and logical development sequence. The first section would be the core functionality, with each subsequent section building on it."
+Reasoning: This breakdown covers the core user flows while ensuring each section is small enough to be designed and built independently.
 
-Then use the AskUserQuestion tool to ask the user: "Does this breakdown make sense? Would you like to adjust any sections or their order?"
+1. Does this breakdown make sense?
+A. Yes, looks perfect
+B. I want to add/remove a section
+C. I want to change the order/priority"
 
 ### Refine with User
 
-Iterate on the sections based on user feedback. Ask clarifying questions:
-- "Should [feature X] be its own section or part of [Section Y]?"
-- "What would you consider the most critical section to build first?"
-- "Are there any major areas I'm missing?"
+Iterate on the sections based on user feedback. Example reasoning and questions:
+
+> "Reasoning: I want to ensure the first section truly represents the 'Minimum Viable Product' and provides value as quickly as possible.
+>
+> 1. What would you consider the most critical section to build first?
+> A. [Section 1] (Core utility)
+> B. [Section 2] (User data/profile)
+> C. [Section 3] (Interface/Shell)"
 
 ### Create the File
 

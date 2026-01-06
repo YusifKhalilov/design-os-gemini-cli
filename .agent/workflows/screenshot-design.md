@@ -31,15 +31,16 @@ First, determine which screen design to screenshot.
 
 Read `/product/product-roadmap.md` to get the list of available sections, then check `src/sections/` to see what screen designs exist.
 
-If only one screen design exists across all sections, auto-select it.
+If only one screen design exists across all sections, auto-select it. If multiple exist, follow the **Questioning & Data Gathering** guidelines:
 
-If multiple screen designs exist, use the AskUserQuestion tool to ask which one to screenshot:
+"Which screen design would you like to screenshot?
 
-"Which screen design would you like to screenshot?"
+Reasoning: Capturing screenshots from different sections ensures your documentation is comprehensive and visually represents each part of the user journey.
 
-Present the available screen designs as options, grouped by section:
-- [Section Name] / [ScreenDesignName]
-- [Section Name] / [ScreenDesignName]
+1. Please select a screen design:
+A. [Section Name] / [ScreenDesign 1]
+B. [Section Name] / [ScreenDesign 2]
+C. [Section Name] / [ScreenDesign 3]"
 
 ## Step 2: Start the Dev Server
 

@@ -36,7 +36,7 @@ export function AppLayout({
         {/* Sub-page header (conditional) */}
         {isSubPage && (
           <div id="subpage-header" className="kiosk-page-header">
-            <div id="subpage-nav" style={{ display: 'grid', gridTemplateColumns: 'auto auto 1fr', alignItems: 'center', gap: '8px' }}>
+            <div id="subpage-nav" style={{ gridColumn: '1 / 7', display: 'grid', gridTemplateColumns: 'auto auto 1fr', alignItems: 'center', gap: '8px' }}>
               <Button
                 id="back-button"
                 variant="ghost"

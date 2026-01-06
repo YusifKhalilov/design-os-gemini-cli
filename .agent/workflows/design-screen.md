@@ -11,7 +11,16 @@ First, identify the target section and verify that `spec.md`, `data.json`, and `
 
 Read `/product/product-roadmap.md` to get the list of available sections.
 
-If there's only one section, auto-select it. If there are multiple sections, use the AskUserQuestion tool to ask which section the user wants to create a screen design for.
+If there's only one section, auto-select it. If there are multiple sections, follow the **Questioning & Data Gathering** guidelines:
+
+"Which section would you like to create a screen design for?
+
+Reasoning: Designing one section at a time allows us to deep-dive into its specific user flows and ensure the UI matches the established requirements.
+
+1. Please select a section:
+A. [Section 1 Title]
+B. [Section 2 Title]
+C. [Section 3 Title]"
 
 Then verify all required files exist:
 
@@ -64,14 +73,16 @@ Identify what views are needed based on the spec. Common patterns:
 
 ## Step 4: Clarify the Screen Design Scope
 
-If the spec implies multiple views, use the AskUserQuestion tool to confirm which view to build first:
+If the spec implies multiple views, use the AskUserQuestion tool to confirm which view to build first following the **Questioning & Data Gathering** guidelines:
 
-"The specification suggests a few different views for **[Section Title]**:
+"The specification suggests a few different views for **[Section Title]**.
 
-1. **[View 1]** - [Brief description]
-2. **[View 2]** - [Brief description]
+Reasoning: Building the primary view first establishes the foundational UI patterns that we can then reuse for secondary screens.
 
-Which view should I create first?"
+1. Which view should I create first?
+A. [View 1] (e.g., Main Dashboard/List)
+B. [View 2] (e.g., Detail View/Profile)
+C. [View 3] (e.g., Creation Wizard/Form)"
 
 If there's only one obvious view, proceed directly.
 

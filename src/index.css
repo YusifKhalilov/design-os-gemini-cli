@@ -686,6 +686,8 @@
   grid-template-rows: 1fr;
   gap: 24px;
   overflow: hidden;
+  height: 100%;
+  min-height: 0;
 }
 
 /* Two-column layout (6+6) */
@@ -693,7 +695,10 @@
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns: subgrid;
+  grid-template-rows: minmax(0, 1fr);
   gap: 24px;
+  height: 100%;
+  min-height: 0;
 }
 .kiosk-split-2 > :nth-child(1) { grid-column: 1 / 7; }
 .kiosk-split-2 > :nth-child(2) { grid-column: 7 / -1; }
@@ -703,7 +708,10 @@
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns: subgrid;
+  grid-template-rows: minmax(0, 1fr);
   gap: 24px;
+  height: 100%;
+  min-height: 0;
 }
 .kiosk-split-3 > :nth-child(1) { grid-column: 1 / 5; }
 .kiosk-split-3 > :nth-child(2) { grid-column: 5 / 9; }
@@ -714,7 +722,10 @@
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns: subgrid;
+  grid-template-rows: minmax(0, 1fr);
   gap: 24px;
+  height: 100%;
+  min-height: 0;
 }
 .kiosk-split-4 > :nth-child(1) { grid-column: 1 / 4; }
 .kiosk-split-4 > :nth-child(2) { grid-column: 4 / 7; }
@@ -959,6 +970,8 @@
   overflow: hidden;
   padding: 24px;
   border-radius: 20px;
+  height: 100%;
+  min-height: 0;
 
   /* Glassmorphic effects - Light mode */
   background: linear-gradient(

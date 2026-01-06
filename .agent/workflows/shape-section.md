@@ -17,55 +17,54 @@ Stop here if the roadmap doesn't exist.
 
 Read `/product/product-roadmap.md` to get the list of available sections.
 
-If there's only one section, auto-select it. If there are multiple sections, use the AskUserQuestion tool to ask which section the user wants to work on:
+If there's only one section, auto-select it. If there are multiple sections, follow the **Questioning & Data Gathering** guidelines:
 
-"Which section would you like to define the specification for?"
+"Which section would you like to define the specification for?
 
-Present the available sections as options.
+Reasoning: We need to focus on one section at a time to ensure high-quality design and detailed requirements.
+
+1. Please select a section:
+A. [Section 1 Title]
+B. [Section 2 Title]
+C. [Section 3 Title]"
 
 ## Step 3: Gather Initial Input
 
-Once the section is identified, invite the user to share any initial thoughts:
-
 "Let's define the scope and requirements for **[Section Title]**.
 
-Do you have any notes or ideas about what this section should include? Share any thoughts about the features, user flows, or UI patterns you're envisioning. If you're not sure yet, we can start with questions."
+Reasoning: Understanding your initial vision helps me tailor the following questions to the most relevant features of this section.
 
-Wait for their response. The user may provide raw notes or ask to proceed with questions.
+1. How would you like to start?
+A. I'll share my raw notes/ideas first
+B. Guide me with a structured set of questions
+C. Start with a standard template for this type of section"
 
 ## Step 4: Ask Clarifying Questions
 
-Use the AskUserQuestion tool to ask 4-6 targeted questions to define:
+Use the AskUserQuestion tool following the **Questioning & Data Gathering** guidelines. Example reasoning and questions:
 
-- **Main user actions/tasks** - What can users do in this section?
-- **Information to display** - What data and content needs to be shown?
-- **Key user flows** - What are the step-by-step interactions?
-- **UI patterns** - Any specific interactions, layouts, or components needed?
-- **Scope boundaries** - What should be explicitly excluded?
+> "Reasoning: To design an effective interface, I need to know the primary actions users will perform and what information is most critical for them to see first.
+>
+> 1. What are the main user actions/tasks in this section?
+> A. Creating and managing content (CRUD)
+> B. Viewing data dashboards and analytics
+> C. Interactive workflows and step-by-step processes
+>
+> 2. What UI patterns do you envision?
+> A. Card-based grid for visual overview
+> B. Detailed data tables for dense information
+> C. Split-view with list and details"
 
-Example questions (adapt based on their input and the section):
-- "What are the main actions a user can take in this section?"
-- "What information needs to be displayed on the primary view?"
-- "Walk me through the main user flow - what happens step by step?"
-- "Are there any specific UI patterns you want to use (e.g., tables, cards, modals)?"
-- "What's intentionally out of scope for this section?"
-- "Are there multiple views needed (e.g., list view and detail view)?"
-
-Ask questions one or two at a time, conversationally. Focus on user experience and interface requirements - no backend or database details.
+Ask questions one or two at a time.
 
 ## Step 5: Ask About Shell Configuration
 
-If a shell design has been created for this project (check if `/src/shell/components/AppShell.tsx` exists), ask the user about shell usage:
+"Reasoning: Some sections like landing pages or modal-only views might need to be standalone, while most core app features should live inside the shell for navigation.
 
-"Should this section's screen designs be displayed **inside the app shell** (with navigation header), or should they be **standalone pages** (without the shell)?
-
-Most sections use the app shell, but some pages like public-facing views, landing pages, or embedded widgets should be standalone."
-
-Use AskUserQuestion with options:
-- "Inside app shell" - The default for most in-app sections
-- "Standalone (no shell)" - For public pages, landing pages, or embeds
-
-If no shell design exists yet, skip this question and default to using the shell.
+1. Should this section's screen designs be displayed inside the app shell?
+A. Inside app shell (Default for most features)
+B. Standalone (Public pages, landing pages, or embeds)
+C. Let's decide later based on the design"
 
 ## Step 6: Present Draft and Refine
 

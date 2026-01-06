@@ -20,34 +20,31 @@ Stop here if prerequisites are missing.
 
 ## Step 2: Gather Initial Input
 
-Review the product overview and roadmap, then present your initial analysis:
+Review the product overview and roadmap, then present your initial analysis following the **Questioning & Data Gathering** guidelines in `agents.md`: Use reasoning, number your questions, and provide A/B/C options for each.
 
-"Based on your product vision and roadmap, I can see you're building **[Product Name]** with sections for [list sections].
-
-Let me help you define the core data model — the main "things" your app will work with.
+"Based on your product vision and roadmap, I can see you're building **[Product Name]** with sections for [list sections]. Let me help you define the core data model.
 
 Looking at your product, here are some entities I'm seeing:
+- **[Entity 1]** — [Brief description]
+- **[Entity 2]** — [Brief description]
 
-- **[Entity 1]** — [Brief description based on product overview]
-- **[Entity 2]** — [Brief description based on sections]
-- **[Entity 3]** — [Brief description]
+Reasoning: Identifying the primary entities first ensures we have a clear vocabulary for relationships and sample data later.
 
-Does this capture the main things your app works with? What would you add, remove, or change?"
-
-Wait for their response before proceeding.
+1. Does this capture the main things your app works with?
+A. Yes, these are the main entities
+B. I want to add some missing entities
+C. I want to rename or remove some of these"
 
 ## Step 3: Refine Entities
 
-Use the AskUserQuestion tool to clarify:
+Iterate on the entities based on user feedback. Example reasoning and questions:
 
-- "Are there any other core entities in your system that users will create, view, or manage?"
-- "For [Entity], what are the most important pieces of information it contains? (Don't need every field, just the key ones)"
-- "How do these entities relate to each other?"
-
-Keep the conversation focused on:
-- **Entity names** — What are the main nouns?
-- **Plain-language descriptions** — What does each entity represent?
-- **Relationships** — How do entities connect to each other?
+> "Reasoning: To ensure data consistency across the app, I need to understand how the core 'nouns' of your system connect to each other.
+>
+> 1. How do these entities relate to each other?
+> A. One-to-many (e.g., One User has many Projects)
+> B. Many-to-many (e.g., Projects have many Tags, and Tags have many Projects)
+> C. One-to-one (e.g., User has one Profile)"
 
 **Important:** Do NOT define every field or database schema details. Keep it minimal and conceptual.
 

@@ -25,6 +25,24 @@ The product you're planning and designing. When creating screen designs and expo
 
 ---
 
+## Questioning & Data Gathering
+
+When gathering information from the user, follow these strict guidelines:
+
+1. **Use Reasoning Techniques**: Before asking any question, use reasoning (Chain of Thought) to explain *why* you are asking it and how it relates to the goal.
+2. **Numbered Questions**: Every question must be clearly numbered (e.g., "1. What is...", "2. How should...").
+3. **Provide Options (A, B, C)**: Every question MUST include three distinct options labeled A, B, and C. These options should represent common or recommended choices to help the user decide quickly.
+
+**Example Question Format:**
+> "Reasoning: Since we are defining the data model, I need to understand the primary scale of the application to determine the most appropriate database schema and relationship complexity.
+>
+> 1. What is the expected volume of data for this product?
+> A. Small (personal use, < 1,000 records)
+> B. Medium (department-level, < 100,000 records)
+> C. Large (enterprise-scale, millions of records)"
+
+---
+
 ## Getting Started — The Planning Flow
 
 Design OS follows a structured planning sequence:

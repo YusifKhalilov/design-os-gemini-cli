@@ -27,37 +27,27 @@ If design tokens are missing, show a warning but continue:
 
 ## Step 2: Analyze Product Structure
 
-Review the roadmap sections and present navigation options:
+Review the roadmap sections and present navigation options following the **Questioning & Data Gathering** guidelines in `agents.md`: Use reasoning, number your questions, and provide A/B/C options for each.
 
-"I'm designing the shell for **[Product Name]**. Based on your roadmap, you have [N] sections:
+"I'm designing the shell for **[Product Name]**. Based on your roadmap, you have [N] sections. Let's decide on the shell layout.
 
-1. **[Section 1]** — [Description]
-2. **[Section 2]** — [Description]
-3. **[Section 3]** — [Description]
+Reasoning: The application shell defines the user's primary navigation mental model. A sidebar is better for deep tools, while top nav is better for content-focused apps.
 
-Let's decide on the shell layout. Common patterns:
-
-**A. Sidebar Navigation** — Vertical nav on the left, content on the right
-   Best for: Apps with many sections, dashboard-style tools, admin panels
-
-**B. Top Navigation** — Horizontal nav at top, content below
-   Best for: Simpler apps, marketing-style products, fewer sections
-
-**C. Minimal Header** — Just logo + user menu, sections accessed differently
-   Best for: Single-purpose tools, wizard-style flows
-
-Which pattern fits **[Product Name]** best?"
-
-Wait for their response.
+1. Which layout pattern fits **[Product Name]** best?
+A. Sidebar Navigation (Best for dashboards/complex tools)
+B. Top Navigation (Best for simpler/marketing-style apps)
+C. Minimal Header (Best for single-purpose/wizard-style tools)
 
 ## Step 3: Gather Design Details
 
-Use AskUserQuestion to clarify:
+Iterate on the design details. Example reasoning and questions:
 
-- "Where should the user menu (avatar, logout) appear?"
-- "Do you want the sidebar collapsible on mobile, or should it become a hamburger menu?"
-- "Any additional items in the navigation? (Settings, Help, etc.)"
-- "What should the 'home' or default view be when the app loads?"
+> "Reasoning: Small details like menu placement and responsive behavior greatly impact the ease of use on different devices.
+>
+> 1. Where should the user menu (avatar, logout) appear?
+> A. Top right (Classic web pattern)
+> B. Bottom of sidebar (Dashboard pattern)
+> C. Inside a dedicated 'Account' nav item"
 
 ## Step 4: Present Shell Specification
 

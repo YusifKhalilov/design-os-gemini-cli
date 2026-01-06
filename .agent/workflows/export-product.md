@@ -42,16 +42,21 @@ You can proceed without these, but they help ensure a complete handoff."
 
 ## Step 2: Gather Export Information
 
-Read all relevant files:
+Read all relevant files and follow the **Questioning & Data Gathering** guidelines if anything is unclear.
 
-1. `/product/product-overview.md` — Product name, description, features
-2. `/product/product-roadmap.md` — List of sections in order
-3. `/product/data-model/data-model.md` (if exists)
-4. `/product/design-system/colors.json` (if exists)
-5. `/product/design-system/typography.json` (if exists)
-6. `/product/shell/spec.md` (if exists)
-7. For each section: `spec.md`, `data.json`, `types.ts`
-8. List screen design components in `src/sections/` and `src/shell/`
+"I'm preparing to generate your product handoff package.
+
+Reasoning: A complete handoff requires context about your target environment to provide the most helpful implementation instructions.
+
+1. How do you plan to implement this product?
+A. Modern React + Next.js (App Router)
+B. Single Page App (Vite + React Router)
+C. Other / Not decided yet
+
+2. Which implementation strategy do you prefer?
+A. One-shot (Build the whole app in one session)
+B. Incremental (Build section-by-section)
+C. TDD-focused (Focus on tests first)"
 
 ## Step 3: Create Export Directory Structure
 

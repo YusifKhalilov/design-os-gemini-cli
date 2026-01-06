@@ -19,45 +19,32 @@ Stop here if the prerequisite is missing.
 
 ## Step 2: Explain the Process
 
-"Let's define the visual identity for **[Product Name]**.
+"Let's define the visual identity for **[Product Name]**. I'll help you choose Colors and Typography. These will be applied consistently across all your screen designs and the application shell.
 
-I'll help you choose:
-1. **Colors** — A primary accent, secondary accent, and neutral palette
-2. **Typography** — Fonts for headings, body text, and code
+Reasoning: Creating a consistent design system early ensures that every component we build later feels part of the same product.
 
-These will be applied consistently across all your screen designs and the application shell.
-
-Do you have any existing brand colors or fonts in mind, or would you like suggestions?"
-
-Wait for their response.
+1. Do you have any existing brand colors or fonts in mind?
+A. I have specific brand colors/fonts to share
+B. No, give me suggestions based on my product
+C. I want to use a classic 'Modern Tech' theme"
 
 ## Step 3: Choose Colors
 
-Help the user select from Tailwind's built-in color palette. Present options based on their product type:
+Help the user select from Tailwind's built-in color palette following the **Questioning & Data Gathering** guidelines in `agents.md`: Use reasoning, number your questions, and provide A/B/C options for each.
 
 "For colors, we'll pick from Tailwind's palette so they work seamlessly with your screen designs.
 
-**Primary color** (main accent, buttons, links):
-Common choices: `blue`, `indigo`, `violet`, `emerald`, `teal`, `amber`, `rose`, `lime`
+Reasoning: Different color palettes evoke different emotions. We should align your product's vibe with its primary purpose.
 
-**Secondary color** (complementary accent, tags, highlights):
-Should complement your primary — often a different hue or a neutral variation
+1. What vibe are you going for?
+A. Professional & Trustworthy (Blues/Slates)
+B. Creative & Energetic (Violets/Limes)
+C. Clean & Minimal (Zincs/Grays)
 
-**Neutral color** (backgrounds, text, borders):
-Options: `slate` (cool gray), `gray` (pure gray), `zinc` (slightly warm), `neutral`, `stone` (warm gray)
-
-Based on [Product Name], I'd suggest:
-- **Primary:** [suggestion] — [why it fits]
-- **Secondary:** [suggestion] — [why it complements]
-- **Neutral:** [suggestion] — [why it works]
-
-What feels right for your product?"
-
-Use AskUserQuestion to gather their preferences if they're unsure:
-
-- "What vibe are you going for? Professional, playful, modern, minimal?"
-- "Any colors you definitely want to avoid?"
-- "Light mode, dark mode, or both?"
+2. Which primary accent color appeals to you most?
+A. `blue` / `indigo` (Stable, Corporate)
+B. `emerald` / `teal` (Natural, Calm)
+C. `rose` / `amber` (Vibrant, Friendly)"
 
 ## Step 4: Choose Typography
 
